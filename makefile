@@ -1,5 +1,5 @@
 TARGET = scanner
-OBJS = lex.yy.o
+OBJS = lex.yy.o interpreter.o
 
 all: $(TARGET)
 
@@ -12,6 +12,6 @@ lex.yy.c: choicescript_yylexer.l
 	  flex -I choicescript_yylexer.l
 
 test:
-	scanner 
+	scanner foo.js
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJS) $(TARGET) lex.yy.c
