@@ -3,7 +3,7 @@
 
 int main(){
 
-	fprintf(stdout, "Hello world!\n");
+	fprintf(stdout, "Hello World!\n");
 
 	return 0;
 }

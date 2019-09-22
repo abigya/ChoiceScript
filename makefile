@@ -1,5 +1,5 @@
 TARGET = scanner
-OBJS = lex.yy.o interpreter.o
+OBJS = lex.yy.o #interpreter.o
 
 all: $(TARGET)
 
