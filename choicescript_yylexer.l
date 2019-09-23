@@ -7,7 +7,28 @@
 
 %option noyywrap
 
+digit         [0-9]
+letter        [a-zA-Z_]
+alnum         {digit}|{letter}
+string        \"([^\n\\\"]|\\.)*\"
+quoted_string \'([^\n\\\']|\\.)*\'
+permitted     {digit}|{letter}|[-%@_+\[\]\\/,\.:]
+unsupported   [;()*^?~{}`]
+
+
 %%
+"#".*"\n"?      { /* comment */ }
+[\t\n\b\v ]+    { /* whitespaces */ }
+choice		{"What choice would you make?";}
+create		{"Create leadership";}
+set		{"Set leadership";}
+if		{"Selected first choice";}
+else		{"Selected second choice";}
+elseif		{"Selected third choice";}
+finish		{"Are you done?";}
+endif		{"Game over";}
+
+
 
 %%
 
