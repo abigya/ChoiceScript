@@ -1,17 +1,17 @@
-TARGET = scanner
+TARGET = ./scanner
 OBJS = lex.yy.o #interpreter.o
 
 all: $(TARGET)
 
-scanner: $(OBJS)
+$(TARGET): $(OBJS)
 	$(CC) $(OBJS) -o $(TARGET)
 
 lex.yy.o: lex.yy.c 
 
 lex.yy.c: choicescript_yylexer.l
-	  flex -I choicescript_yylexer.l
+	  flex -i choicescript_yylexer.l
 
-test:
-	scanner foo.js
+test: $(TARGET)
+	$(TARGET) <sample/animal.txt
 clean:
 	rm -f $(OBJS) $(TARGET) lex.yy.c
