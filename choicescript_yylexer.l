@@ -9,15 +9,15 @@
 
 
 %%
-"#"      	{puts("label");}
-^\t*	        {puts("Tab indentation"); /*indentation one or more tabs*/}
-^" "*		{puts("space indentation");/*indentation one or more spaces*/}
-"*choice"	{puts("Choice command");}
-"*goto"		{puts("goto command");}
-"*label"	{puts("label command");}
-"*finish"	{puts("Finish command");}
+"#"      		{puts("label");}
+^\t*	        	{puts("Tab indentation"); /*one or more tabs*/}
+^" "*			{puts("space indentation");/*one or more spaces*/}
+"*choice"		{puts("Choice command");}
+"*goto"			{puts("goto command");}
+"*label"		{puts("label command");}
+"*finish"		{puts("Finish command");}
 "*comment ".*"\n"?      { /* comment*/ }
-.+               {puts(yytext);}
+             	/*{.+ puts(yytext);}*/
 
 %%
 
