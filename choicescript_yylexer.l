@@ -13,9 +13,8 @@ int valid_int=0, valid_float=0;
 
 
 %%
-^[-+]?[0-9]* valid_int++;
+^[-+]?[0-9]* valid_int++; 
 ^[-+]?[0-9]*[.][0-9]+$ valid_float++;
-.;
 "#".*"\n"?      	{puts("label");}
 ^\t*	        	{puts("Tab indentation"); /*one or more tabs*/}
 ^" "*			{puts("space indentation");/*one or more spaces*/}
@@ -25,7 +24,9 @@ int valid_int=0, valid_float=0;
 "*label".*"\n"?		{puts("label command");}
 "*finish".*"\n"?	{puts("Finish command");}
 "*create".*"\n"?	{puts("Create command");}
-"*set".*"\n"?		{puts("Set command");}
+"*set".*"\n"?		{puts("Set command");
+			/*char *token = yytext;
+			maybe pass to a function to get the number and choice*/}
 "*if".*"\n"?		{puts("If command");}
 "*else".*"\n"?		{puts("Else command");}
 "*elseif".*"\n"?	{puts("Elseif command");}
