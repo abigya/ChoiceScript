@@ -12,6 +12,6 @@ lex.yy.c: choicescript_yylexer.l
 	  flex -i choicescript_yylexer.l
 
 test: $(TARGET)
-	$(TARGET) <sample/animal.txt
+	$(TARGET) <sample/variables.txt
 clean:
 	rm -f $(OBJS) $(TARGET) lex.yy.c
