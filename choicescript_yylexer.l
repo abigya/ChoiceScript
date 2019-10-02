@@ -46,6 +46,7 @@ d	[0-9]
 "*link"		{puts("~link command");}
 "*comment ".*"\n"?      { /* comment*/ }
 "+"		{puts("~add");}
+[ \n\t]+	{puts("~space");}
 . 			{printf("^%s",yytext);}
 [a-zA-Z0-9]+		{printf("^%s",yytext);}
 
