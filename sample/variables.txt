@@ -16,6 +16,9 @@
 *comment either express or implied.
 
 *set leadership 10
+*set abc +3.3 + 5
+*set var -.3
+*set dummy -3.
 *set strength 10
 
 What do you prefer?
