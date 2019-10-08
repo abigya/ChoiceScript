@@ -16,20 +16,18 @@ int valid_int=0, valid_float=0;
 
 %option noyywrap
 d	[0-9]
-%s 	INDENT
+%s 	INDENT EXPR
 
 %%
+<EXPR>\n 	    	    { BEGIN(INITIAL); }
+^[\t ]+             	    { printf("INDENT %ld\n", strlen(yytext)); BEGIN(INDENT);}
+<EXPR>[+-]?[0-9]+   	    { printf("INT: %s\n", yytext); }
+<EXPR>[+-]?[0-9]+\.[0-9]*   { printf("FLOAT: %s\n", yytext); }
+<EXPR>[+-]?\.[0-9]+   	    { printf("FLOAT: %s\n", yytext); }
+<EXPR>\+ 		    { puts("PLUS"); }
+<EXPR>\> 		    { puts("GT"); }
 
-[-+]?{d}+ 			{printf("~(int)%s\n",yytext);} 
-[-+]?(({d}+\.{d}*)|(\.{d}+))	{printf("~(float)%s\n",yytext);}
-^[[ ]]+				{printf("INDENT %ld\n", strlen(yytext));BEGIN(INDENT);}
-[0-9]+				{printf("NUMBER: %s\n", yytext);}
-<INDENT>[*#][[a-z]]+		{printf("COMMAND:`%s`\n",yytext); BEGIN(INITIAL);}
-^[*#][[a-z]]+			{printf("COMMAND:`%s`\n",yytext);}
-[^[ ]*#]+ 			{printf("STRING:`%s`\n",yytext);}
-"#".*"\n"?      		{puts("~label");}
-^\t*	        		{puts("~Tab indentation"); /*one or more tabs*/}
-^" "*				{puts("~space indentation");/*one or more spaces*/}
+^[[" "]]+\n		{puts("~space indentation");/*one or more spaces*/}
 
 "*choice"		{puts("~Choice command");
 				return YY_CS_CHOICE;}			
