@@ -28,6 +28,7 @@ d	[0-9]
 <EXPR>\> 		    { puts("GT"); }
 
 ^[[" "]]+\n		{puts("~space indentation");/*one or more spaces*/}
+^[[\t]]+\n		{puts("~tab indentation");/*one or more spaces*/}
 
 "*choice"		{puts("~Choice command");
 				return YY_CS_CHOICE;}			
