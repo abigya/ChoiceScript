@@ -19,92 +19,105 @@ d	[0-9]
 %s 	INDENT EXPR
 
 %%
+"*comment ".*"\n"?      { /* comment*/ }
 <EXPR>\n 	    	    { BEGIN(INITIAL); }
 ^[\t ]+             	    { printf("INDENT %ld\n", strlen(yytext)); BEGIN(INDENT);}
 <EXPR>[+-]?[0-9]+   	    { printf("INT: %s\n", yytext); }
 <EXPR>[+-]?[0-9]+\.[0-9]*   { printf("FLOAT: %s\n", yytext); }
 <EXPR>[+-]?\.[0-9]+   	    { printf("FLOAT: %s\n", yytext); }
 <EXPR>\+ 		    { puts("PLUS"); }
+<EXPR>\-		    { puts("MINUS"); }
+<EXPR>\/		    { puts("DIVIDE"); }
+<EXPR>\* 		    { puts("MULTIPLY"); }
 <EXPR>\> 		    { puts("GT"); }
+<EXPR>\<		    { puts("LT"); }
+<EXPR>\= 		    { puts("EQUAL TO"); }
 
 ^[[" "]]+\n		{puts("~space indentation");/*one or more spaces*/}
-^[[\t]]+\n		{puts("~tab indentation");/*one or more spaces*/}
-
-"*choice"		{puts("~Choice command");
-				return YY_CS_CHOICE;}			
-"*goto_scene"		{puts("~goto_scene command");
-				return YY_CS_GOTO_SCENE;}				     
-"*goto"			{puts("~goto command");
-				return YY_CS_GOTO;}		    
-"*label"		{puts("~label command");
+^[[\t]]+\n		{puts("~tab indentation");/*one or more tabs*/}
+<INDENT>"*choice" |
+^"*choice"		{puts("~Choice command"); BEGIN(INITIAL);
+				return YY_CS_CHOICE;}
+<INDENT>"*goto_scene" |				
+^"*goto_scene"		{puts("~goto_scene command");
+				return YY_CS_GOTO_SCENE;}
+<INDENT>"*goto" |				
+^"*goto"			{puts("~goto command");
+				return YY_CS_GOTO;}
+<INDENT>"*label" |				
+^"*label"		{puts("~label command");
 				return YY_CS_LABEL;}
-"*finish"		{puts("~Finish command");
+<INDENT>"*finish" |				
+^"*finish"		{puts("~Finish command");
 				return YY_CS_FINISH;}
-"*create"		{puts("~Create command");
+<INDENT>"*create" |				
+^"*create"		{puts("~Create command");
 				return YY_CS_CREATE;}
-"*set"			{puts("~Set command");
+<INDENT>"*set" |				
+^"*set"			{puts("~Set command");
 				return YY_CS_SET;}
-"*if"			{puts("~If command");
+<INDENT>"*if" |				
+^"*if"			{puts("~If command");
 				return YY_CS_IF;}
-"*else"			{puts("~Else command");
+<INDENT>"*else" |				
+^"*else"		{puts("~Else command");
 				return YY_CS_ELSE;}
-"*elseif"		{puts("~Elseif command");
+<INDENT>"*elseif" |				
+^"*elseif"		{puts("~Elseif command");
 				return YY_CS_ELSEIF;}
-"*scene_list"		{puts("~scene_list command");
+<INDENT>"*scene_list" |				
+^"*scene_list"		{puts("~scene_list command");
 				return YY_CS_SCENE_LIST;}
-"*image"		{puts("~image command");
+<INDENT>"*image" |				
+^"*image"		{puts("~image command");
 				return YY_CS_IMAGE;}
-"*line_break"		{puts("~line_break command");
+<INDENT>"*line_break" |				
+^"*line_break"		{puts("~line_break command");
 				return YY_CS_LINE_BREAK;}
-"*input_text"		{puts("~input_text command");
+<INDENT>"*input_text" |				
+^"*input_text"		{puts("~input_text command");
 				return YY_CS_INPUT_TEXT;}
-"*input_number"		{puts("~input_number command");
+<INDENT>"*input_number" |				
+^"*input_number"	{puts("~input_number command");
 				return YY_CS_INPUT_NUMBER;}
-"*rand"			{puts("~rand command");
+<INDENT>"*rand" |				
+^"*rand"		{puts("~rand command");
 				return YY_CS_RAND;}
-"*stat_chart"		{puts("~stat_chart command");
+<INDENT>"*stat_chart" |				
+^"*stat_chart"		{puts("~stat_chart command");
 				return YY_CS_STAT_CHART;}
-"*bug"			{puts("~bug command");
+<INDENT>"*bug" |				
+^"*bug"			{puts("~bug command");
 				return YY_CS_BUG;}
-"*page_break"		{puts("~page_break command");
+<INDENT>"*page_break" |				
+^"*page_break"		{puts("~page_break command");
 				return YY_CS_PAGE_BREAK;}
-"*hide_reuse"		{puts("~hide_reuse command");
+<INDENT>"*hide_reuse" |				
+^"*hide_reuse"		{puts("~hide_reuse command");
 				return YY_CS_HIDE_REUSE;}
-"*disable_reuse"	{puts("~disable_reuse command");
+<INDENT>"*disabe_reuse" |				
+^"*disable_reuse"	{puts("~disable_reuse command");
 				return YY_CS_DISABLE_REUSE;}
-"*gosub_scene"		{puts("~gosub_scene command");
+<INDENT>"*gosub_scene" |				
+^"*gosub_scene"		{puts("~gosub_scene command");
 				return YY_CS_GOSUB_SCENE;}
-"*gosub"		{puts("~gosub command");
+<INDENT>"*gosub" |				
+^"*gosub"		{puts("~gosub command");
 				return YY_CS_GOSUB;}
-"*return"		{puts("~return command");
+<INDENT>"*return" |				
+^"*return"		{puts("~return command");
 				return YY_CS_RETURN;}
-"*ending"		{puts("~ending command");
+<INDENT>"*ending" |				
+^"*ending"		{puts("~ending command");
 				return YY_CS_ENDING;}
-"*link"			{puts("~link command");
+<INDENT>"*link" |				
+^"*link"		{puts("~link command");
 				return YY_CS_LINK;}
-
-"*comment ".*"\n"?      { /* comment*/ }
-"+"			{puts("~add");
-				return YY_CS_ADD;}
-"-"			{puts("~subtract");
-				return YY_CS_SUBTRACT;}
-"/"			{puts("~divide");
-				return YY_CS_DIVIDE;}
-"*"			{puts("~multiply");
-				return YY_CS_MULTIPLY;}
-">"			{puts("~greater than");
-				return YY_CS_GREATER;}
-"<"			{puts("~less than");
-				return YY_CS_LESS;}
-"="			{puts("~equal to");
-				return YY_CS_EQUAL;}
-
-
+<INDENT>#.+\n |
+^#.+\n              	{ printf("CASE: `%s`\n", strtok(yytext + 1, "\n\r")); }
+[^[" "]]+       	{ printf("STRING: `%s`\n", yytext); }
 [ \n\t]+		{puts("~space");}
 . 			{printf("^%s",yytext);}
-[a-zA-Z0-9]+		{printf("^%s",yytext);}
-
-             	
 
 %%
 
