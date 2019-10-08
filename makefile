@@ -15,10 +15,29 @@ lex.yy.o: lex.yy.c
 
 lex.yy.c: choicescript_yylexer.l
 	  flex -i choicescript_yylexer.l
-	  gcc lex.yy.c -lfl -o $(TARGET)
 
 test: $(TARGET)
 	$(TARGET) <sample/variables.txt
 clean:
 	rm -f $(OBJS) $(TARGET) lex.yy.c choicescript_yyparser.tab.c choicescript_yyparser.tab.h
+
+
+#BIN = ./cs
+#SRC = lex.yy.c
+
+#all: $(BIN)
+
+#$(BIN): $(SRC)
+#	gcc $^ -o $@ -lfl
+
+#$(SRC): choicescript_yylexer.l
+#	flex -o $@ $<
+
+#test: $(BIN)
+#	$(BIN) < sample/variables.txt
+
+#clean:
+#	rm -rf $(BIN) $(SRC)
+
+
 

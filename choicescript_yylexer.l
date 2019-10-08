@@ -33,91 +33,90 @@ d	[0-9]
 <EXPR>\<		    { puts("LT"); }
 <EXPR>\= 		    { puts("EQUAL TO"); }
 
-^[[" "]]+\n		{puts("~space indentation");/*one or more spaces*/}
-^[[\t]]+\n		{puts("~tab indentation");/*one or more tabs*/}
+^[[:space"]]+\n		{puts("~space indentation");/*one or more spaces*/}
+[[ \t]]+|\n		{puts("~tab indentation");/*one or more tabs*/}
+
 <INDENT>"*choice" |
 ^"*choice"		{puts("~Choice command"); BEGIN(INITIAL);
-				return YY_CS_CHOICE;}
+				/**return YY_CS_CHOICE;**/}
 <INDENT>"*goto_scene" |				
-^"*goto_scene"		{puts("~goto_scene command");
-				return YY_CS_GOTO_SCENE;}
+^"*goto_scene"		{puts("~goto_scene command"); BEGIN(INITIAL);
+				/**return YY_CS_GOTO_SCENE;**/}
 <INDENT>"*goto" |				
-^"*goto"			{puts("~goto command");
-				return YY_CS_GOTO;}
+^"*goto"		{puts("~goto command"); BEGIN(INITIAL);}
+				/**return YY_CS_GOTO;**/
 <INDENT>"*label" |				
-^"*label"		{puts("~label command");
-				return YY_CS_LABEL;}
+^"*label"		{puts("~label command"); BEGIN(INITIAL);}
+				/**return YY_CS_LABEL;}**/
 <INDENT>"*finish" |				
-^"*finish"		{puts("~Finish command");
-				return YY_CS_FINISH;}
+^"*finish"		{puts("~Finish command"); BEGIN(INITIAL);}
+				/**return YY_CS_FINISH;}**/
 <INDENT>"*create" |				
-^"*create"		{puts("~Create command");
-				return YY_CS_CREATE;}
+^"*create"		{puts("~Create command"); BEGIN(INITIAL);}
+				/**return YY_CS_CREATE;}**/
 <INDENT>"*set" |				
-^"*set"			{puts("~Set command");
-				return YY_CS_SET;}
+^"*set"			{puts("~Set command"); BEGIN(EXPR);}
+				/**return YY_CS_SET;}**/
 <INDENT>"*if" |				
-^"*if"			{puts("~If command");
-				return YY_CS_IF;}
+^"*if"			{puts("~If command"); BEGIN(EXPR);}
+				/**return YY_CS_IF;}**/
 <INDENT>"*else" |				
-^"*else"		{puts("~Else command");
-				return YY_CS_ELSE;}
+^"*else"		{puts("~Else command");BEGIN(EXPR);}
+				/**return YY_CS_ELSE;}**/
 <INDENT>"*elseif" |				
-^"*elseif"		{puts("~Elseif command");
-				return YY_CS_ELSEIF;}
+^"*elseif"		{puts("~Elseif command");BEGIN(EXPR);}
+				/**return YY_CS_ELSEIF;}**/
 <INDENT>"*scene_list" |				
-^"*scene_list"		{puts("~scene_list command");
-				return YY_CS_SCENE_LIST;}
+^"*scene_list"		{puts("~scene_list command"); BEGIN(INITIAL);}
+				/**return YY_CS_SCENE_LIST;}**/
 <INDENT>"*image" |				
-^"*image"		{puts("~image command");
-				return YY_CS_IMAGE;}
+^"*image"		{puts("~image command"); BEGIN(INITIAL);}
+				/**return YY_CS_IMAGE;}**/
 <INDENT>"*line_break" |				
-^"*line_break"		{puts("~line_break command");
-				return YY_CS_LINE_BREAK;}
+^"*line_break"		{puts("~line_break command"); BEGIN(INITIAL);}
+				/**return YY_CS_LINE_BREAK;}**/
 <INDENT>"*input_text" |				
-^"*input_text"		{puts("~input_text command");
-				return YY_CS_INPUT_TEXT;}
+^"*input_text"		{puts("~input_text command"); BEGIN(INITIAL);}
+				/**return YY_CS_INPUT_TEXT;}**/
 <INDENT>"*input_number" |				
-^"*input_number"	{puts("~input_number command");
-				return YY_CS_INPUT_NUMBER;}
+^"*input_number"	{puts("~input_number command"); BEGIN(INITIAL);}
+				/**return YY_CS_INPUT_NUMBER;}**/
 <INDENT>"*rand" |				
-^"*rand"		{puts("~rand command");
-				return YY_CS_RAND;}
+^"*rand"		{puts("~rand command"); BEGIN(INITIAL);}
+				/**return YY_CS_RAND;}**/
 <INDENT>"*stat_chart" |				
-^"*stat_chart"		{puts("~stat_chart command");
-				return YY_CS_STAT_CHART;}
+^"*stat_chart"		{puts("~stat_chart command"); BEGIN(INITIAL);}
+				/**return YY_CS_STAT_CHART;}**/
 <INDENT>"*bug" |				
-^"*bug"			{puts("~bug command");
-				return YY_CS_BUG;}
+^"*bug"			{puts("~bug command"); BEGIN(INITIAL);}
+				/**return YY_CS_BUG;}**/
 <INDENT>"*page_break" |				
-^"*page_break"		{puts("~page_break command");
-				return YY_CS_PAGE_BREAK;}
+^"*page_break"		{puts("~page_break command"); BEGIN(INITIAL);}
+				/**return YY_CS_PAGE_BREAK;}**/
 <INDENT>"*hide_reuse" |				
-^"*hide_reuse"		{puts("~hide_reuse command");
-				return YY_CS_HIDE_REUSE;}
+^"*hide_reuse"		{puts("~hide_reuse command"); BEGIN(INITIAL);}
+				/**return YY_CS_HIDE_REUSE;}**/
 <INDENT>"*disabe_reuse" |				
-^"*disable_reuse"	{puts("~disable_reuse command");
-				return YY_CS_DISABLE_REUSE;}
+^"*disable_reuse"	{puts("~disable_reuse command"); BEGIN(INITIAL);}
+				/**return YY_CS_DISABLE_REUSE;}**/
 <INDENT>"*gosub_scene" |				
-^"*gosub_scene"		{puts("~gosub_scene command");
-				return YY_CS_GOSUB_SCENE;}
+^"*gosub_scene"		{puts("~gosub_scene command"); BEGIN(INITIAL);}
+				/**return YY_CS_GOSUB_SCENE;}**/
 <INDENT>"*gosub" |				
-^"*gosub"		{puts("~gosub command");
-				return YY_CS_GOSUB;}
+^"*gosub"		{puts("~gosub command"); BEGIN(INITIAL);}
+				/**return YY_CS_GOSUB;}**/
 <INDENT>"*return" |				
-^"*return"		{puts("~return command");
-				return YY_CS_RETURN;}
+^"*return"		{puts("~/**return command"); BEGIN(INITIAL);}
+				/**return YY_CS_/**return;}**/
 <INDENT>"*ending" |				
-^"*ending"		{puts("~ending command");
-				return YY_CS_ENDING;}
+^"*ending"		{puts("~ending command"); BEGIN(INITIAL);}
+				/**return YY_CS_ENDING;}**/
 <INDENT>"*link" |				
-^"*link"		{puts("~link command");
-				return YY_CS_LINK;}
+^"*link"		{puts("~link command"); BEGIN(INITIAL);}
+				/**return YY_CS_LINK;}**/
 <INDENT>#.+\n |
 ^#.+\n              	{ printf("CASE: `%s`\n", strtok(yytext + 1, "\n\r")); }
-[^[" "]]+       	{ printf("STRING: `%s`\n", yytext); }
-[ \n\t]+		{puts("~space");}
-. 			{printf("^%s",yytext);}
+[^[:space:]]+       	{ printf("STRING: `%s`\n", yytext); }
 
 %%
 
