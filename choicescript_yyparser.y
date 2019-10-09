@@ -1,6 +1,7 @@
 %{
 	#include <stdlib.h>
 	#include <stdio.h>
+	void yyerror(char*);
 	int yylex();
 %}
 
@@ -37,10 +38,40 @@
 %token YY_CS_GREATER
 %token YY_CS_LESS
 %token YY_CS_EQUAL
+%token YY_CS_STRING
+%token YY_CS_INT
+%token YY_CS_FLOAT
+%token YY_CS_CASE
+%token YY_CS_PINDENT
+%token YY_CS_NINDENT
+
 
 %start story
 %%
 story:
-	{/*empty line*/}
+	assignment {puts("Assignment found");} story
+	|choice {puts("Choice found");} story
+	|goto {puts("goto found");} story
+	|;
+	
+assignment:
+	   YY_CS_SET YY_CS_STRING expression;
+expression:
+	   YY_CS_INT
+	   | YY_CS_FLOAT;
+choice: 
+	YY_CS_CHOICE YY_CS_PINDENT cases YY_CS_NINDENT;
+cases:
+	case cases
+	| case;
+case:
+	YY_CS_CASE YY_CS_PINDENT story {puts("Case found");} YY_CS_NINDENT;
+goto:
+	YY_CS_GOTO YY_CS_STRING;
+	
+	
+	
+	  
+	
 %%
 
