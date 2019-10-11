@@ -44,6 +44,7 @@
 %token YY_CS_CASE
 %token YY_CS_PINDENT
 %token YY_CS_NINDENT
+%token YY_CS_NOINDENT
 
 
 %start story
@@ -68,8 +69,6 @@ case:
 	YY_CS_CASE YY_CS_PINDENT story {puts("Case found");} YY_CS_NINDENT;
 goto:
 	YY_CS_GOTO YY_CS_STRING;
-	
-	
 	
 	  
 	

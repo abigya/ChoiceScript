@@ -34,20 +34,20 @@ d	[0-9]
 <EXPR>\<		    { puts("LT"); }
 <EXPR>\= 		    { puts("EQUAL TO"); }
 
-^[[:space:]]+\n		{puts("~space indentation");/**return adjustIndent(yytext);**//*one or more spaces*/}
-[[ \t]]+|\n		{puts("~tab indentation");/*return adjustIndent(yytext);/*one or more tabs*/}
+^[[:space:]]+\n		{/**puts("~space indentation");/**return adjustIndent(yytext);**//*one or more spaces*/}
+[[ \t]]+|\n		{/**puts("~tab indentation");/*return adjustIndent(yytext);/*one or more tabs*/}
 
 <INDENT>"*choice" |
-^"*choice"		{puts("~Choice command"); BEGIN(INITIAL);
+^"*choice"		{/**puts("~Choice command");**/ BEGIN(INITIAL);
 				return YY_CS_CHOICE;}
 <INDENT>"*goto_scene" |				
 ^"*goto_scene"		{puts("~goto_scene command"); BEGIN(INITIAL);
 				/**return YY_CS_GOTO_SCENE;**/}
 <INDENT>"*goto" |				
-^"*goto"		{puts("~goto command"); BEGIN(INITIAL);
+^"*goto"		{/**puts("~goto command");**/ BEGIN(INITIAL);
 				return YY_CS_GOTO;}
 <INDENT>"*label" |				
-^"*label"		{puts("~label command"); BEGIN(INITIAL);}
+^"*label"		{/**puts("~label command");**/ BEGIN(INITIAL);}
 				/**return YY_CS_LABEL;}**/
 <INDENT>"*finish" |				
 ^"*finish"		{puts("~Finish command"); BEGIN(INITIAL);}
@@ -144,6 +144,7 @@ int adjustIndent(char* text){
 		depth = strlen(text);
 		puts("Negative indent");
 		return YY_CS_NINDENT;
+	
 	}else{
 		return -1;			
 	}
