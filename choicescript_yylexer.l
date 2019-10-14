@@ -33,6 +33,12 @@ d	[0-9]
 <EXPR>\> 		    { puts("GT"); }
 <EXPR>\<		    { puts("LT"); }
 <EXPR>\= 		    { puts("EQUAL TO"); }
+<EXPR>\and		    { puts("AND");}
+<EXPR>\&		    { puts("JOIN");}
+<EXPR>\round([+-]?[0-9]+\.[0-9]*) {puts("ROUND");}
+<EXPR>\round([+-]?\.[0-9]+)	  {puts("ROUND");}
+<EXPR>\[a-zA-Z0-9]+#[0-9]+	  {puts("extracting characters");}
+<EXPR>\$\{+[a-zA-Z]\}+		  {puts("Virtue keyword");}
 
 ^[[:space:]]+\n		{/**puts("~space indentation");/**return adjustIndent(yytext);**//*one or more spaces*/}
 [[ \t]]+|\n		{/**puts("~tab indentation");/*return adjustIndent(yytext);/*one or more tabs*/}
@@ -118,6 +124,9 @@ d	[0-9]
 <INDENT>#.+\n |
 ^#.+\n              	{ /**printf("CASE: `%s`\n", strtok(yytext + 1, "\n\r"));**/ return YY_CS_CASE; }
 [^[:space:]]+       	{ /**printf("STRING: `%s`\n", yytext);**/ return YY_CS_STRING; }
+^[$][!][{][a-zA-Z]+[}]$		{puts("capitalize first letter of string");}
+^[$][!]+[{][a-zA-Z]+[}]$	 {puts("capitalize the entire string");}
+
 
 %%
 
