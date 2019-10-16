@@ -4,8 +4,7 @@
 	#include <string.h>
 	#include <math.h>
 	#include "choicescript_yyparser.tab.h"
-	static int depth = 0;
-	void adjustIndent(char* text); 
+	static int depth = 0; 
 	#ifdef __APPLE__
 	extern int yylex(void);
 	extern int yyparse(void);
@@ -51,7 +50,7 @@ d	[0-9]
 "*goto"			{puts("~goto command"); BEGIN(INITIAL);
 				return YY_CS_GOTO;}
 				
-"*label"		{puts("~label command"); adjustIndent("");
+"*label"		{puts("~label command"); 
 				return YY_CS_LABEL;}
 			
 "*finish"		{puts("~Finish command"); BEGIN(INITIAL);}

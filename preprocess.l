@@ -26,3 +26,17 @@ void adjustIndent(char* text){
 	depth = new_depth;
 }
 
+int main(void){
+	fprintf(stdout,"Hello from preprocessor!\n");
+	yylex();
+	return 0;
+
+}
+
+
+int yyerror(void){
+	fprintf(stderr,"Error!\n");
+	exit(1);
+	
+}
+

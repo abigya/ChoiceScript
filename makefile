@@ -1,5 +1,5 @@
 TARGET = ./scanner
-OBJS = choicescript_yyparser.tab.o lex.yy.o
+OBJS = choicescript_yyparser.tab.o lex.yy.o 
 
 all: $(TARGET)
 
@@ -11,16 +11,16 @@ choicescript_yyparser.tab.c choicescript_yyparser.tab.h: choicescript_yyparser.y
 
 choicescript_yyparser.tab.o: choicescript_yyparser.tab.c
 
-lex.yy.o: lex.yy.c 
+lex.yy.o: lex.yy.c -lfl
 
 lex.yy.c: choicescript_yylexer.l preprocess.l
 	  flex -i choicescript_yylexer.l
-	  flex -i choicescript_yylexer.l
+	  flex -i preprocess.l
 
 test: $(TARGET)
-	$(TARGET) <sample/variables.txt
+	$(TARGET) <sample/variables.txt | less
 clean:
-	rm -f $(OBJS) $(TARGET) lex.yy.c choicescript_yyparser.tab.c choicescript_yyparser.tab.h
+	rm -f $(OBJS) $(TARGET) lex.yy.c choicescript_yyparser.tab.c choicescript_yyparser.tab.h 
 
 
 
