@@ -48,27 +48,38 @@
 
 
 %start story
+
 %%
 story:
 	assignment {puts("Assignment found");} story
 	|choice {puts("Choice found");} story
 	|goto {puts("goto found");} story
+	|label {puts("label found");} story
+	|conditional {puts("conditional found");} story
 	|;
 	
 assignment:
 	   YY_CS_SET YY_CS_STRING expression;
+conditional:
+	    YY_CS_IF YY_CS_STRING expression 
+	    | YY_CS_ELSE YY_CS_STRING expression
+            | YY_CS_ELSEIF YY_CS_STRING expression;
 expression:
 	   YY_CS_INT
 	   | YY_CS_FLOAT;
 choice: 
-	YY_CS_CHOICE YY_CS_PINDENT cases YY_CS_NINDENT;
+	YY_CS_CHOICE YY_CS_PINDENT YY_CS_PINDENT cases YY_CS_NINDENT YY_CS_NINDENT; 
 cases:
 	case cases
 	| case;
 case:
-	YY_CS_CASE YY_CS_PINDENT story {puts("Case found");} YY_CS_NINDENT;
+	YY_CS_CASE {puts("Case found");} YY_CS_PINDENT story  YY_CS_NINDENT;
 goto:
 	YY_CS_GOTO YY_CS_STRING;
+label: 
+	YY_CS_LABEL YY_CS_STRING;
+
+
 	
 	  
 	

@@ -21,16 +21,18 @@
 *set dummy -3.
 *set strength 10
 
+
 *comment What do you prefer?
 *choice
   #Leadership
-    *set leadership +10
-    *goto action
+   *set leadership +10
+
+   *goto action
   #Strength
-    *set strength +10
+   *set strength +10
 
 *label action
-What will you do today?
+*comment What will you do today?
 *choice
   #Run for class president
     *if leadership > 15

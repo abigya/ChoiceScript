@@ -5,7 +5,7 @@
 	#include <math.h>
 	#include "choicescript_yyparser.tab.h"
 	static int depth = 0;
-	int adjustIndent(char* text); 
+	void adjustIndent(char* text); 
 	#ifdef __APPLE__
 	extern int yylex(void);
 	extern int yyparse(void);
@@ -17,12 +17,11 @@ d	[0-9]
 %s 	INDENT EXPR
 
 %%
-"*comment ".*"\n"?      { /* comment*/ }
-<EXPR>\n 	    	    { BEGIN(INITIAL); }
-^[\t ]*             	    { printf("INDENT %ld\n", strlen(yytext));BEGIN(INDENT); 
-					int check = adjustIndent(yytext);
-					if (check!=-1)return check;
-				}				
+"*comment".*\n     { /* comment*/ }
+^[:space:]*\n		    { adjustIndent(yytext);}
+^[\t ]+            	    { adjustIndent(yytext);}	
+\x1			{puts("positive indent");return YY_CS_PINDENT;}
+\x2			{puts("negative indent"); return YY_CS_NINDENT;}			
 <EXPR>[+-]?[0-9]+   	    { /**printf("INT: %s\n", yytext);**/ return YY_CS_INT;}
 <EXPR>[+-]?[0-9]+\.[0-9]*   { /**printf("FLOAT: %s\n", yytext);**/return YY_CS_FLOAT; }
 <EXPR>[+-]?\.[0-9]+   	    { /*printf("FLOAT: %s\n", yytext);**/ return YY_CS_FLOAT; }
@@ -38,41 +37,40 @@ d	[0-9]
 <EXPR>\round([+-]?[0-9]+\.[0-9]*) {puts("ROUND");}
 <EXPR>\round([+-]?\.[0-9]+)	  {puts("ROUND");}
 <EXPR>\[a-zA-Z0-9]+#[0-9]+	  {puts("extracting characters");}
-<EXPR>\$\{+[a-zA-Z]\}+		  {puts("Virtue keyword");}
+<EXPR>\$\{+[virtue]\}+		  {puts("Virtue expression");}
 
-^[[:space:]]+\n		{/**puts("~space indentation");/**return adjustIndent(yytext);**//*one or more spaces*/}
-[[ \t]]+|\n		{/**puts("~tab indentation");/*return adjustIndent(yytext);/*one or more tabs*/}
 
-<INDENT>"*choice" |
-^"*choice"		{/**puts("~Choice command");**/ BEGIN(INITIAL);
+
+
+"*choice"		{puts("~Choice command"); BEGIN(INITIAL);
 				return YY_CS_CHOICE;}
-<INDENT>"*goto_scene" |				
-^"*goto_scene"		{puts("~goto_scene command"); BEGIN(INITIAL);
+		
+"*goto_scene"		{puts("~goto_scene command"); BEGIN(INITIAL);
 				/**return YY_CS_GOTO_SCENE;**/}
-<INDENT>"*goto" |				
-^"*goto"		{/**puts("~goto command");**/ BEGIN(INITIAL);
+				
+"*goto"		{puts("~goto command"); BEGIN(INITIAL);
 				return YY_CS_GOTO;}
-<INDENT>"*label" |				
-^"*label"		{/**puts("~label command");**/ BEGIN(INITIAL);}
-				/**return YY_CS_LABEL;}**/
-<INDENT>"*finish" |				
-^"*finish"		{puts("~Finish command"); BEGIN(INITIAL);}
+				
+"*label"		{puts("~label command"); adjustIndent("");
+				return YY_CS_LABEL;}
+			
+"*finish"		{puts("~Finish command"); BEGIN(INITIAL);}
 				/**return YY_CS_FINISH;}**/
 <INDENT>"*create" |				
 ^"*create"		{puts("~Create command"); BEGIN(INITIAL);}
 				/**return YY_CS_CREATE;}**/
-<INDENT>"*set" |				
-^"*set"			{/**puts("~Set command");**/ BEGIN(EXPR);
+				
+"*set"			{puts("~Set command"); BEGIN(EXPR);
 				return YY_CS_SET;}
-<INDENT>"*if" |				
-^"*if"			{puts("~If command"); BEGIN(EXPR);}
-				/**return YY_CS_IF;}**/
-<INDENT>"*else" |				
-^"*else"		{puts("~Else command");BEGIN(EXPR);}
-				/**return YY_CS_ELSE;}**/
-<INDENT>"*elseif" |				
-^"*elseif"		{puts("~Elseif command");BEGIN(EXPR);}
-				/**return YY_CS_ELSEIF;}**/
+			
+"*if"			{ BEGIN(EXPR);
+				return YY_CS_IF;}
+				
+"*else"		{BEGIN(EXPR);
+				return YY_CS_ELSE;}
+				
+"*elseif"		{BEGIN(EXPR);
+				return YY_CS_ELSEIF;}
 <INDENT>"*scene_list" |				
 ^"*scene_list"		{puts("~scene_list command"); BEGIN(INITIAL);}
 				/**return YY_CS_SCENE_LIST;}**/
@@ -122,10 +120,12 @@ d	[0-9]
 ^"*link"		{puts("~link command"); BEGIN(INITIAL);}
 				/**return YY_CS_LINK;}**/
 <INDENT>#.+\n |
-^#.+\n              	{ /**printf("CASE: `%s`\n", strtok(yytext + 1, "\n\r"));**/ return YY_CS_CASE; }
-[^[:space:]]+       	{ /**printf("STRING: `%s`\n", yytext);**/ return YY_CS_STRING; }
+#.+\n              	{ printf("CASE: `%s`\n", strtok(yytext + 1, "\n\r"));return YY_CS_CASE; }
+[^[:space:]\x1\x2]+       	{ printf("STRING: `%s`\n", yytext);return YY_CS_STRING; }
 ^[$][!][{][a-zA-Z]+[}]$		{puts("capitalize first letter of string");}
 ^[$][!]+[{][a-zA-Z]+[}]$	 {puts("capitalize the entire string");}
+^[$][{][a-zA-Z]+[}]$		{puts("quoted string");}
+
 
 
 %%
@@ -144,20 +144,6 @@ int yyerror(void){
 	
 }
 
-int adjustIndent(char* text){
-	if (strlen(text)>depth){
-		depth = strlen(text);
-		puts("Positive indent");
-		return YY_CS_PINDENT;	
-	}else if(strlen(text)<depth){
-		depth = strlen(text);
-		puts("Negative indent");
-		return YY_CS_NINDENT;
-	
-	}else{
-		return -1;			
-	}
-}
 
 
 
