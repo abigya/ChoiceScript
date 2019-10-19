@@ -53,20 +53,23 @@
 story:
 	assignment {puts("Assignment found");} story
 	|choice {puts("Choice found");} story
-	|goto {puts("goto found");} story
-	|label {puts("label found");} story
-	|conditional {puts("conditional found");} story
+	|goto {puts("Goto found");} story
+	|label {puts("Label found");} story
+	|conditional {puts("Conditional found");} story
 	|;
 	
 assignment:
 	   YY_CS_SET YY_CS_STRING expression;
+
 conditional:
 	    YY_CS_IF YY_CS_STRING expression 
 	    | YY_CS_ELSE YY_CS_STRING expression
             | YY_CS_ELSEIF YY_CS_STRING expression;
+
 expression:
 	   YY_CS_INT
 	   | YY_CS_FLOAT;
+
 choice: 
 	YY_CS_CHOICE YY_CS_PINDENT YY_CS_PINDENT cases YY_CS_NINDENT YY_CS_NINDENT; 
 cases:

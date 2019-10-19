@@ -1,26 +1,25 @@
-TARGET = ./scanner
-OBJS = choicescript_yyparser.tab.o lex.yy.o 
+BIN = ./scanner
+OBJS = csparser.o lex.yy.o
+CFLAGS = -Wall
+YACC = bison
+LEX = flex
 
-all: $(TARGET)
+all: $(BIN)
 
-$(TARGET): $(OBJS)
-	$(CC) $(OBJS) -o $(TARGET)
+$(BIN): $(OBJS)
+	$(CC) $(OBJS) -o $(BIN)
 
-choicescript_yyparser.tab.c choicescript_yyparser.tab.h: choicescript_yyparser.y
-	bison -d choicescript_yyparser.y
+csparser.c csparser.h: choicescript_yyparser.y
+	$(YACC) -d choicescript_yyparser.y -o csparser.c
 
-choicescript_yyparser.tab.o: choicescript_yyparser.tab.c
+lex.yy.c: choicescript_yylexer.l 
+	$(LEX) -i choicescript_yylexer.l
 
-lex.yy.o: lex.yy.c -lfl
+test: $(BIN)
+	$(BIN) < sample/variables.txt #| less
 
-lex.yy.c: choicescript_yylexer.l preprocess.l
-	  flex -i choicescript_yylexer.l
-	  flex -i preprocess.l
-
-test: $(TARGET)
-	$(TARGET) <sample/variables.txt | less
 clean:
-	rm -f $(OBJS) $(TARGET) lex.yy.c choicescript_yyparser.tab.c choicescript_yyparser.tab.h 
+	rm -f $(OBJS) $(BIN) lex.yy.c csparser.c csparser.h 
 
 
 
