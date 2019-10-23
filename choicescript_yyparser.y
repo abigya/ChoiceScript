@@ -44,6 +44,7 @@
 %token YY_CS_LESS
 %token YY_CS_EQUAL
 %token YY_CS_AND
+%token YY_CS_JOIN
 %token<s> YY_CS_STRING
 %token<i> YY_CS_INT
 %token<d> YY_CS_FLOAT

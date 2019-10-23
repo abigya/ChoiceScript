@@ -33,15 +33,15 @@ FLT     [+-]?(({D}+"."{D}*)|("."{D}+))
 
 <EXPR>{INT}   	{ printf("INT(%d)\n", atoi(yytext));yylval.i = atoi(yytext); return YY_CS_INT;}
 <EXPR>{FLT}   	{ printf("FLOAT(%.2f)\n", atof(yytext));yylval.d = atoi(yytext); return YY_CS_FLOAT; }
-<EXPR>"+" 	{ puts("PLUS"); }
-<EXPR>"-"	{ puts("MINUS"); }
-<EXPR>"/"	{ puts("DIVIDE"); }
-<EXPR>"*" 	{ puts("MULTIPLY"); }
+<EXPR>"+" 	{ puts("PLUS"); return YY_CS_ADD;}
+<EXPR>"-"	{ puts("MINUS");return YY_CS_SUBTRACT; }
+<EXPR>"/"	{ puts("DIVIDE"); return YY_CS_DIVIDE; }
+<EXPR>"*" 	{ puts("MULTIPLY");return YY_CS_MULTIPLY; }
 <EXPR>">" 	{ puts("GT"); return YY_CS_GREATER;}
-<EXPR>"<"	{ puts("LT"); }
-<EXPR>"=" 	{ puts("EQUAL TO"); }
+<EXPR>"<"	{ puts("LT");return YY_CS_LESS; }
+<EXPR>"=" 	{ puts("EQUAL TO");return YY_CS_EQUAL; }
 <EXPR>"and"	{ puts("AND"); return YY_CS_AND;}
-<EXPR>"&"	{ puts("JOIN");}
+<EXPR>"&"	{ puts("JOIN");return YY_CS_JOIN;}
  /**possibly missing <= >= != OR NOT**/
 
  /* This part needs fixing */
@@ -61,59 +61,45 @@ FLT     [+-]?(({D}+"."{D}*)|("."{D}+))
 "*label"	{puts("LABEL"); return YY_CS_LABEL; }
 "*scene_list"	{puts("SCENE_LIST"); return YY_CS_SCENE_LIST; }
 "*set"		{puts("SET"); BEGIN(EXPR); return YY_CS_SET; }
-			
-"*image"	{puts("~image command"); }
-			/**return YY_CS_IMAGE;}**/
 		
-"*line_break"	{puts("~line_break command"); }
-			/**return YY_CS_LINE_BREAK;}**/
-			
-"*input_text"	{puts("~input_text command"); }
-			/**return YY_CS_INPUT_TEXT;}**/
-			
-"*input_number"	{puts("~input_number command"); }
-			/**return YY_CS_INPUT_NUMBER;}**/
-			
-"*rand"		{puts("~rand command"); }
-				/**return YY_CS_RAND;}**/
-			
-"*stat_chart"	{puts("~stat_chart command"); }
-			/**return YY_CS_STAT_CHART;}**/
-			
-"*bug"		{puts("~bug command"); }
-			/**return YY_CS_BUG;}**/
+"*image"	{puts("~image command"); return YY_CS_IMAGE;}
 		
-"*page_break"	{puts("~page_break command"); }
-			/**return YY_CS_PAGE_BREAK;}**/
+"*line_break"	{puts("~line_break command"); return YY_CS_LINE_BREAK;}
 			
-"*hide_reuse"	{puts("~hide_reuse command"); }
-			/**return YY_CS_HIDE_REUSE;}**/
+"*input_text"	{puts("~input_text command"); return YY_CS_INPUT_TEXT;}
+						
+"*input_number"	{puts("~input_number command"); return YY_CS_INPUT_NUMBER;}
+						
+"*rand"		{puts("~rand command");return YY_CS_RAND;}
 			
-"*disable_reuse" {puts("~disable_reuse command"); }
-			/**return YY_CS_DISABLE_REUSE;}**/
+"*stat_chart"	{puts("~stat_chart command");return YY_CS_STAT_CHART;}		
 			
-"*gosub_scene"	{puts("~gosub_scene command"); }
-			/**return YY_CS_GOSUB_SCENE;}**/
+"*bug"		{puts("~bug command");return YY_CS_BUG;}
+		
+"*page_break"	{puts("~page_break command"); return YY_CS_PAGE_BREAK;}
 			
-"*gosub"	{puts("~gosub command"); }
-			/**return YY_CS_GOSUB;}**/
+"*hide_reuse"	{puts("~hide_reuse command");return YY_CS_HIDE_REUSE;}
 			
-"*return"	{puts("~/**return command"); }
-			/**return YY_CS_RETURN;}**/
+"*disable_reuse" {puts("~disable_reuse command");return YY_CS_DISABLE_REUSE;}
 			
-"*ending"	{puts("~ending command"); }
-			/**return YY_CS_ENDING;}**/
+"*gosub_scene"	{puts("~gosub_scene command");return YY_CS_GOSUB_SCENE;}
 			
-"*link"		{ puts("~link command"); }
-			/**return YY_CS_LINK;}**/
+"*gosub"	{puts("~gosub command");return YY_CS_GOSUB;}
+			
+"*return"	{puts("~/**return command"); return YY_CS_RETURN;}
+			
+"*ending"	{puts("~ending command");return YY_CS_ENDING;}
+			
+"*link"		{ puts("~link command"); return YY_CS_LINK;}
 
-#.+$            { printf("CASE(%s)\n", strtok(yytext + 1, "\n\r")); yylval.s = strdup( strtok(yytext + 1, "\n\r"));return YY_CS_CASE; }
+#.+$            { printf("CASE(%s)\n", strtok(yytext + 1, "\n\r")); yylval.s = strdup( strtok(yytext + 1, 				"\n\r"));return YY_CS_CASE; }
+
 [^[:space:]\x1\x2]+     { printf("STR(%s)\n", yytext); yylval.s = strdup(yytext);return YY_CS_STRING; }
 
  /* This part needs fixing */
-[$!{:alpha:}]+	{ puts("capitalize first letter of string"); /* ?? */}
-[$!+{:alpha:}]+	{ puts("capitalize the entire string"); /* ?? */}
-[${:alpha:}]+	{ puts("quoted string"); /* ?? */}
+[$!{:alpha:}]+	{ puts("capitalize first letter of string");}
+[$!+{:alpha:}]+	{ puts("capitalize the entire string");}
+[${:alpha:}]+	{ puts("quoted string");}
 
 %%
 
