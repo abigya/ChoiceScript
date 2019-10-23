@@ -4,6 +4,11 @@
 	void yyerror(char*);
 	int yylex();
 %}
+%union{
+	int i;
+	double d;
+	char *s;
+}
 
 %token YY_CS_CHOICE			
 %token YY_CS_GOTO_SCENE			     
@@ -38,14 +43,15 @@
 %token YY_CS_GREATER
 %token YY_CS_LESS
 %token YY_CS_EQUAL
-%token YY_CS_STRING
-%token YY_CS_INT
-%token YY_CS_FLOAT
-%token YY_CS_CASE
+%token YY_CS_AND
+%token<s> YY_CS_STRING
+%token<i> YY_CS_INT
+%token<d> YY_CS_FLOAT
+%token<s> YY_CS_CASE
 %token YY_CS_PINDENT
 %token YY_CS_NINDENT
-%token YY_CS_NOINDENT
 
+%left YY_CS_AND YY_CS_LESS YY_CS_EQUAL YY_CS_GREATER YY_CS_ADD YY_CS_SUBTRACT YY_CS_DIVIDE YY_CS_MULTIPLY 
 
 %start story
 
@@ -59,17 +65,41 @@ story:
 	|;
 	
 assignment:
-	   YY_CS_SET YY_CS_STRING expression;
+	   YY_CS_SET YY_CS_STRING arithmeticexpression;
 
 conditional:
-	    YY_CS_IF YY_CS_STRING expression 
-	    | YY_CS_ELSE YY_CS_STRING expression
-            | YY_CS_ELSEIF YY_CS_STRING expression;
-
-expression:
+	    YY_CS_IF logicalexpression block elseifcontinuation elsecontinuation;
+elsecontinuation:
+		YY_CS_ELSE block
+		|;
+elseifcontinuation:
+		   YY_CS_ELSEIF logicalexpression block elseifcontinuation
+		   |;
+block:
+      YY_CS_PINDENT story YY_CS_NINDENT
+      |YY_CS_PINDENT block YY_CS_NINDENT;		
+arithmeticexpression:
 	   YY_CS_INT
-	   | YY_CS_FLOAT;
-
+	   |YY_CS_FLOAT
+	   |YY_CS_STRING
+	   |arithmeticexpression arithmeticoperator arithmeticexpression;
+arithmeticoperator:
+		YY_CS_ADD
+		| YY_CS_SUBTRACT
+ 		|YY_CS_DIVIDE
+ 		|YY_CS_MULTIPLY;
+relationaloperator:
+ 		|YY_CS_GREATER
+ 		|YY_CS_LESS
+ 		|YY_CS_EQUAL
+		;	
+logicalexpression:
+		  relationalexpression logicaloperator relationalexpression
+		  |relationalexpression;
+logicaloperator:
+		YY_CS_AND;
+relationalexpression:
+		     arithmeticexpression relationaloperator arithmeticexpression; 	
 choice: 
 	YY_CS_CHOICE YY_CS_PINDENT YY_CS_PINDENT cases YY_CS_NINDENT YY_CS_NINDENT; 
 cases:

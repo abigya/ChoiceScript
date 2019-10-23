@@ -4,8 +4,10 @@
   extern int yylex(void);
   extern int yyparse(void);
 #endif
-  void adjustIndent(char*);
+  void adjustIndent(char*); 
+	
 %}
+
 
 %option noyywrap
 %option noinput
@@ -29,22 +31,23 @@ FLT     [+-]?(({D}+"."{D}*)|("."{D}+))
 \x1             { puts("{"); return YY_CS_PINDENT;}
 \x2		{ puts("}"); return YY_CS_NINDENT;}
 
-<EXPR>{INT}   	{ printf("INT(%d)\n", atoi(yytext)); return YY_CS_INT;}
-<EXPR>{FLT}   	{ printf("FLOAT(%.2f)\n", atof(yytext)); return YY_CS_FLOAT; }
+<EXPR>{INT}   	{ printf("INT(%d)\n", atoi(yytext));yylval.i = atoi(yytext); return YY_CS_INT;}
+<EXPR>{FLT}   	{ printf("FLOAT(%.2f)\n", atof(yytext));yylval.d = atoi(yytext); return YY_CS_FLOAT; }
 <EXPR>"+" 	{ puts("PLUS"); }
 <EXPR>"-"	{ puts("MINUS"); }
 <EXPR>"/"	{ puts("DIVIDE"); }
 <EXPR>"*" 	{ puts("MULTIPLY"); }
-<EXPR>">" 	{ puts("GT"); }
+<EXPR>">" 	{ puts("GT"); return YY_CS_GREATER;}
 <EXPR>"<"	{ puts("LT"); }
 <EXPR>"=" 	{ puts("EQUAL TO"); }
-<EXPR>"and"	{ puts("AND");}
+<EXPR>"and"	{ puts("AND"); return YY_CS_AND;}
 <EXPR>"&"	{ puts("JOIN");}
+ /**possibly missing <= >= != OR NOT**/
 
  /* This part needs fixing */
-<EXPR>"round("{FLT}")"	    { puts("ROUND"); /* Wrong */}
+<EXPR>"["round"(FLT),]+"     { puts("ROUND");}
 <EXPR>[[:alpha:]{D}]+#{D}+  { puts("extracting characters");}
-<EXPR>"${"+[virtue]"}"+	    { puts("Virtue expression"); /* Wrong */}
+<EXPR>"[${"virtue"}]+"	    { puts("Virtue expression");}
 
 
 "*choice"	{puts("CHOICE"); return YY_CS_CHOICE; }
@@ -104,13 +107,13 @@ FLT     [+-]?(({D}+"."{D}*)|("."{D}+))
 "*link"		{ puts("~link command"); }
 			/**return YY_CS_LINK;}**/
 
-#.+$            { printf("CASE(%s)\n", strtok(yytext + 1, "\n\r")); return YY_CS_CASE; }
-[^[:space:]\x1\x2]+     { printf("STR(%s)\n", yytext); return YY_CS_STRING; }
+#.+$            { printf("CASE(%s)\n", strtok(yytext + 1, "\n\r")); yylval.s = strdup( strtok(yytext + 1, "\n\r"));return YY_CS_CASE; }
+[^[:space:]\x1\x2]+     { printf("STR(%s)\n", yytext); yylval.s = strdup(yytext);return YY_CS_STRING; }
 
  /* This part needs fixing */
-^"$!{"[[:alpha:]]+"}"$	{ puts("capitalize first letter of string"); /* ?? */}
-^"$!{"[[:alpha:]]+"}"$	{ puts("capitalize the entire string"); /* ?? */}
-^"${"[[:alpha:]]+"}"$	{ puts("quoted string"); /* ?? */}
+[$!{:alpha:}]+	{ puts("capitalize first letter of string"); /* ?? */}
+[$!+{:alpha:}]+	{ puts("capitalize the entire string"); /* ?? */}
+[${:alpha:}]+	{ puts("quoted string"); /* ?? */}
 
 %%
 
