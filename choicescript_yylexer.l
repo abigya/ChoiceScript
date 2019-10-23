@@ -5,6 +5,7 @@
   extern int yyparse(void);
 #endif
   void adjustIndent(char*); 
+  char *my_strdup(const char *ptr);
 	
 %}
 
@@ -92,9 +93,9 @@ FLT     [+-]?(({D}+"."{D}*)|("."{D}+))
 			
 "*link"		{ puts("~link command"); return YY_CS_LINK;}
 
-#.+$            { printf("CASE(%s)\n", strtok(yytext + 1, "\n\r")); yylval.s = strdup( strtok(yytext + 1, 				"\n\r"));return YY_CS_CASE; }
+#.+$            { printf("CASE(%s)\n", strtok(yytext + 1, "\n\r")); yylval.s = my_strdup( strtok(yytext + 1, 				"\n\r"));return YY_CS_CASE; }
 
-[^[:space:]\x1\x2]+     { printf("STR(%s)\n", yytext); yylval.s = strdup(yytext);return YY_CS_STRING; }
+[^[:space:]\x1\x2]+     { printf("STR(%s)\n", yytext); yylval.s = my_strdup(yytext);return YY_CS_STRING; }
 
  /* This part needs fixing */
 [$!{:alpha:}]+	{ puts("capitalize first letter of string");}
@@ -120,5 +121,13 @@ void adjustIndent(char* text){
   for (int i = 0; i < new_depth - depth; i++) unput('\x1');
   for (int i = 0; i < depth - new_depth; i++) unput('\x2');
   depth = new_depth;
+}
+char *my_strdup(const char *ptr){
+   void* check = strdup(ptr);
+   if (check==NULL){
+	abort();
+   }
+   return check;
+		
 }
 
