@@ -105,10 +105,12 @@ CHAR    [^[:space:]\x1\x2]
                       yylval.s = my_strdup(yytext); return YY_CS_STRING; }
 
 
- /* This part needs fixing */
+ 
 \$![{a-zA-Z}]+$	{ puts("capitalize first letter of string");}
-\$!![{a-zA-Z}]+$	{ puts("capitalize the entire string");}
+\$!![{a-zA-Z}]+$ { puts("capitalize the entire string");}
 \$[{a-zA-Z}]+$	{ puts("quoted string");}
+(\[[b]*](.+)\/b\]) {puts("bold");}
+(\[[i]*](.+)\/i\]) {puts("italics");}
 
 %%
 
