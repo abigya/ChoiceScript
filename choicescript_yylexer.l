@@ -106,9 +106,9 @@ CHAR    [^[:space:]\x1\x2]
 
 
  /* This part needs fixing */
-\$\![:alpha:]+	{ puts("capitalize first letter of string");}
-\$\!+[:alpha:]+	{ puts("capitalize the entire string");}
-\$[:alpha:]+	{ puts("quoted string");}
+\$![{a-zA-Z}]+$	{ puts("capitalize first letter of string");}
+\$!![{a-zA-Z}]+$	{ puts("capitalize the entire string");}
+\$[{a-zA-Z}]+$	{ puts("quoted string");}
 
 %%
 
