@@ -22,7 +22,7 @@
 *set strength 10
 
 
-*comment What do you prefer?
+[i]What do [b]you[/b] prefer?[/i]
 *choice
   #Leadership
    *set leadership +10
@@ -32,11 +32,11 @@
    *set strength +10
 
 *label action
-*comment What will you do today?
+What will you do today?
 *choice
   #Run for class president
     *if leadership > 15
-      You win the election.
+      You [b]win[/b] the election.
       *finish
     You lose the election.
     *finish

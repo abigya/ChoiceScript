@@ -18,7 +18,7 @@ EOL     [[:space:]]{-}[[:blank:]]
 D	[[:digit:]]
 INT     [+-]?{D}+
 FLT     [+-]?(({D}+"."{D}*)|("."{D}+))
-CHAR    [^[:space:]\x1\x2]
+CHAR    [^[:space:]\x1\x2[]
 
 %s 	EXPR
 
@@ -30,12 +30,12 @@ CHAR    [^[:space:]\x1\x2]
 <<EOF>>	        { adjustIndent(""); if (brace_balance == 0) yyterminate(); /* End of file */ };
 
 "*comment".*$   /* comment */
-\x1             { puts("{"); brace_balance++; return YY_CS_PINDENT;}
-\x2		{ puts("}"); brace_balance--; return YY_CS_NINDENT;}
+\x1             { puts("%{"); brace_balance++; return YY_CS_PINDENT;}
+\x2		{ puts("%}"); brace_balance--; return YY_CS_NINDENT;}
 
-<EXPR>{INT}   	{ printf("INT(%d)\n", atoi(yytext)); yylval.i = atoi(yytext); return YY_CS_INT;}
-<EXPR>{FLT}   	{ printf("FLOAT(%.2f)\n", atof(yytext)); yylval.d = atoi(yytext); return YY_CS_FLOAT; }
-<EXPR>"and"	{ puts("AND"); return YY_CS_AND;}
+<EXPR>{INT}   	{ printf("%%INT(%d)\n", atoi(yytext)); yylval.i = atoi(yytext); return YY_CS_INT;}
+<EXPR>{FLT}   	{ printf("%%FLOAT(%.2f)\n", atof(yytext)); yylval.d = atoi(yytext); return YY_CS_FLOAT; }
+<EXPR>"and"	{ puts("%AND"); return YY_CS_AND;}
 <EXPR>"+" 	|
 <EXPR>"-"	{ return yytext[0];}
 <EXPR>"/"	|
@@ -49,68 +49,71 @@ CHAR    [^[:space:]\x1\x2]
 <EXPR>")"       { return yytext[0];}
  /**possibly missing <= >= != OR NOT**/
 
-"*choice"	{puts("CHOICE"); return YY_CS_CHOICE; }
-"*create"	{puts("CREATE"); BEGIN(EXPR); return YY_CS_CREATE; }
-"*else"		{puts("ELSE"); return YY_CS_ELSE; }
-"*elseif"	{puts("ELIF"); BEGIN(EXPR); return YY_CS_ELSEIF; }	
+"*choice"	{puts("%CHOICE"); return YY_CS_CHOICE; }
+"*create"	{puts("%CREATE"); BEGIN(EXPR); return YY_CS_CREATE; }
+"*else"		{puts("%ELSE"); return YY_CS_ELSE; }
+"*elseif"	{puts("%ELIF"); BEGIN(EXPR); return YY_CS_ELSEIF; }	
 "*finish"	{return YY_CS_FINISH; }
-"*goto"		{puts("GOTO"); BEGIN(EXPR); return YY_CS_GOTO; }
+"*goto"		{puts("%GOTO"); BEGIN(EXPR); return YY_CS_GOTO; }
 "*goto_scene"	{BEGIN(EXPR); return YY_CS_GOTO_SCENE; }
-"*if"		{puts("IF"); BEGIN(EXPR); return YY_CS_IF; }
-"*label"	{puts("LABEL"); BEGIN(EXPR); return YY_CS_LABEL; }
-"*scene_list"	{puts("SCENE_LIST"); return YY_CS_SCENE_LIST; }
-"*set"		{puts("SET"); BEGIN(EXPR); return YY_CS_SET; }
+"*if"		{puts("%IF"); BEGIN(EXPR); return YY_CS_IF; }
+"*label"	{puts("%LABEL"); BEGIN(EXPR); return YY_CS_LABEL; }
+"*scene_list"	{puts("%SCENE_LIST"); return YY_CS_SCENE_LIST; }
+"*set"		{puts("%SET"); BEGIN(EXPR); return YY_CS_SET; }
 		
-"*image"	{puts("~image command"); return YY_CS_IMAGE;}
+"*image"	{puts("%~image command"); return YY_CS_IMAGE;}
 		
-"*line_break"	{puts("~line_break command"); return YY_CS_LINE_BREAK;}
+"*line_break"	{puts("%~line_break command"); return YY_CS_LINE_BREAK;}
 			
-"*input_text"	{puts("~input_text command"); return YY_CS_INPUT_TEXT;}
+"*input_text"	{puts("%~input_text command"); return YY_CS_INPUT_TEXT;}
 						
-"*input_number"	{puts("~input_number command"); return YY_CS_INPUT_NUMBER;}
+"*input_number"	{puts("%~input_number command"); return YY_CS_INPUT_NUMBER;}
 						
-"*rand"		{puts("~rand command");return YY_CS_RAND;}
+"*rand"		{puts("%~rand command");return YY_CS_RAND;}
 			
-"*stat_chart"	{puts("~stat_chart command");return YY_CS_STAT_CHART;}		
+"*stat_chart"	{puts("%~stat_chart command");return YY_CS_STAT_CHART;}		
 			
-"*bug"		{puts("~bug command");return YY_CS_BUG;}
+"*bug"		{puts("%~bug command");return YY_CS_BUG;}
 		
-"*page_break"	{puts("~page_break command"); return YY_CS_PAGE_BREAK;}
+"*page_break"	{puts("%~page_break command"); return YY_CS_PAGE_BREAK;}
 			
-"*hide_reuse"	{puts("~hide_reuse command");return YY_CS_HIDE_REUSE;}
+"*hide_reuse"	{puts("%~hide_reuse command");return YY_CS_HIDE_REUSE;}
 			
-"*disable_reuse" {puts("~disable_reuse command");return YY_CS_DISABLE_REUSE;}
+"*disable_reuse" {puts("%~disable_reuse command");return YY_CS_DISABLE_REUSE;}
 			
-"*gosub_scene"	{puts("~gosub_scene command");return YY_CS_GOSUB_SCENE;}
+"*gosub_scene"	{puts("%~gosub_scene command");return YY_CS_GOSUB_SCENE;}
 			
-"*gosub"	{puts("~gosub command");return YY_CS_GOSUB;}
+"*gosub"	{puts("%~gosub command");return YY_CS_GOSUB;}
 			
-"*return"	{puts("~return command"); return YY_CS_RETURN;}
+"*return"	{puts("%~return command"); return YY_CS_RETURN;}
 			
-"*ending"	{puts("~ending command");return YY_CS_ENDING;}
+"*ending"	{puts("%~ending command");return YY_CS_ENDING;}
 			
-"*link"		{ puts("~link command"); return YY_CS_LINK;}
+"*link"		{ puts("%~link command"); return YY_CS_LINK;}
 
-#.+$            { printf("CASE(%s)\n", strtok(yytext + 1, "\n\r"));
+#.+$            { printf("%%CASE(%s)\n", strtok(yytext + 1, "\n\r"));
                   yylval.s = my_strdup( strtok(yytext + 1, "\n\r"));
                   return YY_CS_CASE; }
 
  /* This part needs fixing */
-<EXPR>"#{"[^}]+"}"      { puts("Index"); }
-<EXPR>"$"+"{"{CHAR}+"}" { puts("Reference");}
+"[b]" 		{puts("%begin bold");return YY_CS_BEGINBOLD;}
+"[/b]"           {puts("%end bold"); return YY_CS_ENDBOLD;}
+"[i]" 		{puts("%begin italics");return YY_CS_BEGINITALICS;}
+"[/i]"           {puts("%end italics"); return YY_CS_ENDITALICS;}
 
-<EXPR>{CHAR}+ { printf("VAR(%s)\n", yytext);
+<EXPR>"#{"[^}]+"}"      { puts("%Index"); }
+<EXPR>"$"+"{"{CHAR}+"}" { puts("%Reference");}
+
+<EXPR>{CHAR}+ { printf("%%VAR(%s)\n", yytext);
                       yylval.s = my_strdup(yytext); return YY_CS_VAR; }
-{CHAR}+ { printf("STR(%s)\n", yytext);
+{CHAR}+ { printf("%%STR(%s)\n", yytext);
                       yylval.s = my_strdup(yytext); return YY_CS_STRING; }
 
 
  
-\$![{a-zA-Z}]+$	{ puts("capitalize first letter of string");}
-\$!![{a-zA-Z}]+$ { puts("capitalize the entire string");}
-\$[{a-zA-Z}]+$	{ puts("quoted string");}
-(\[[b]*](.+)\/b\]) {puts("bold");}
-(\[[i]*](.+)\/i\]) {puts("italics");}
+\$![{a-zA-Z}]+$	{ puts("%capitalize first letter of string");}
+\$!![{a-zA-Z}]+$ { puts("%capitalize the entire string");}
+\$[{a-zA-Z}]+$	{ puts("%quoted string");}
 
 %%
 

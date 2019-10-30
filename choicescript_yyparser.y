@@ -44,24 +44,44 @@
 %token<s> YY_CS_CASE
 %token YY_CS_PINDENT
 %token YY_CS_NINDENT
+%token YY_CS_BEGINBOLD
+%token YY_CS_ENDBOLD
+%token YY_CS_BEGINITALICS
+%token YY_CS_ENDITALICS
 
 %left YY_CS_AND '<' '=' '>' '+' '-' '/' '*'
 
-%start story
+%start book
 
 %%
+book:
+	{puts("\\documentclass{book}");
+         puts("\\begin{document}");
+	puts("\\title{MyFirstBook}");
+        puts("\\date{}");
+	puts("\\author{ChoiceScript$\\rightarrow$ LaTeX}"); 
+	puts("\\maketitle");} 
+        story {puts("\\end{document}");};
 story:
-	  assignment {puts("Assignment found");} story
-	| choice {puts("Choice found");} story
-	| label {puts("Label found");} story
-	| conditional {puts("Conditional found");} story
-	| YY_CS_STRING story
+	  assignment {puts("%Assignment found");} story
+	| choice {puts("%Choice found");} story
+	| label {puts("%Label found");} story
+	| conditional {puts("%Conditional found");} story
+	| tagged-word story
 	|;
-
+tagged-word:
+	      YY_CS_STRING {puts($1);} 
+	      | YY_CS_BEGINBOLD {puts("{\\bf");} tagged-string YY_CS_ENDBOLD {fputs("}",stdout);}
+	      | YY_CS_BEGINITALICS {puts("{\\it");}tagged-string YY_CS_ENDITALICS {fputs("}",stdout);};
+             
+tagged-string:
+		tagged-word tagged-string
+		|;
+		
 break:
-    YY_CS_FINISH {puts("Finish found");}
-  | goto         {puts("Goto found");}
-  | goto-scene   {puts("Goto-scene found");}
+    YY_CS_FINISH {puts("%Finish found");}
+  | goto         {puts("%Goto found");}
+  | goto-scene   {puts("%Goto-scene found");}
   | ;
 
 assignment:
@@ -125,7 +145,7 @@ relational-expression:
        | '(' relational-expression ')' ;
 
 choice: 
-	YY_CS_CHOICE block-cases;
+	YY_CS_CHOICE {puts("\\begin{description}");}block-cases {puts("\\end{description}");};
 
 block-cases:
         YY_CS_PINDENT cases YY_CS_NINDENT
@@ -136,16 +156,16 @@ cases:
 	| case;
 
 case:
-	YY_CS_CASE block {puts("Case found");};
+	YY_CS_CASE {printf("\\item[%s]\n",$1);}block {puts("%Case found");};
 
 goto:
-	YY_CS_GOTO YY_CS_VAR;
+	YY_CS_GOTO YY_CS_VAR  {printf("To continue, go to page \\pageref{%s}.\n",$2);};
 
 goto-scene:
 	YY_CS_GOTO_SCENE YY_CS_VAR;
 
 label: 
-	YY_CS_LABEL YY_CS_VAR;
+	YY_CS_LABEL YY_CS_VAR {printf("\\newpage\n\\marginpar{Label ``%s''}\\label{%s}\n\n",$2,$2);};
 
 %%
 

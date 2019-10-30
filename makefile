@@ -16,7 +16,9 @@ lex.yy.c: choicescript_yylexer.l
 	$(LEX) -i choicescript_yylexer.l
 
 test: $(BIN)
-	$(BIN) < sample/variables.txt #| less
+	$(BIN) < sample/variables.txt 
+latex: $(BIN)
+	$(BIN) < sample/variables.txt > variables.tex 
 
 clean:
 	rm -f $(OBJS) $(BIN) lex.yy.c csparser.c csparser.h 
