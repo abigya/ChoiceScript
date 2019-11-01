@@ -90,6 +90,8 @@ CHAR    [^[:space:]\x1\x2[]
 "*ending"	{puts("%~ending command");return YY_CS_ENDING;}
 			
 "*link"		{ puts("%~link command"); return YY_CS_LINK;}
+"*title"	{ puts("%~title command"); BEGIN(EXPR);return YY_CS_TITLE;}
+"*author"	{ puts("%~author command");BEGIN(EXPR); return YY_CS_AUTHOR;}
 
 #.+$            { printf("%%CASE(%s)\n", strtok(yytext + 1, "\n\r"));
                   yylval.s = my_strdup( strtok(yytext + 1, "\n\r"));

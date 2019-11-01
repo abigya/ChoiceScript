@@ -48,6 +48,8 @@
 %token YY_CS_ENDBOLD
 %token YY_CS_BEGINITALICS
 %token YY_CS_ENDITALICS
+%token YY_CS_TITLE
+%token YY_CS_AUTHOR
 
 %left YY_CS_AND '<' '=' '>' '+' '-' '/' '*'
 
@@ -57,18 +59,35 @@
 book:
 	{puts("\\documentclass{book}");
          puts("\\begin{document}");
-	puts("\\title{MyFirstBook}");
-        puts("\\date{}");
-	puts("\\author{ChoiceScript$\\rightarrow$ LaTeX}"); 
-	puts("\\maketitle");} 
+        puts("\\date{}");}
+	preamble {puts("\\maketitle");}
         story {puts("\\end{document}");};
+preamble:
+	title author; /*may go change in opposite order or become optional*/
+title:
+	YY_CS_TITLE {puts("\\title{");}/*vars*/{fputs("}",stdout);};
+author:
+	YY_CS_AUTHOR {puts("\\author{");} vars {fputs("}",stdout);};
+	
 story:
 	  assignment {puts("%Assignment found");} story
 	| choice {puts("%Choice found");} story
 	| label {puts("%Label found");} story
 	| conditional {puts("%Conditional found");} story
 	| tagged-word story
+	/**| scenelist story*/
 	|;
+scenelist:
+	  YY_CS_SCENE_LIST blockofwords;
+
+blockofwords: YY_CS_PINDENT blockofwords YY_CS_NINDENT
+	     |words;
+words:
+	YY_CS_STRING{puts($1);} words
+	| YY_CS_STRING{puts($1);};
+vars:
+	|YY_CS_VAR{puts($1);} vars
+	| YY_CS_VAR{puts($1);};
 tagged-word:
 	      YY_CS_STRING {puts($1);} 
 	      | YY_CS_BEGINBOLD {puts("{\\bf");} tagged-string YY_CS_ENDBOLD {fputs("}",stdout);}
