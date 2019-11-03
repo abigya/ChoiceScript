@@ -51,7 +51,9 @@
 %token YY_CS_TITLE
 %token YY_CS_AUTHOR
 
-%left YY_CS_AND '<' '=' '>' '+' '-' '/' '*'
+%left '+' '-' '/' '*'
+%left '<' '=' '>'
+%left YY_CS_AND
 
 %start book
 
@@ -63,9 +65,12 @@ book:
 	preamble {puts("\\maketitle");}
         story {puts("\\end{document}");};
 preamble:
-	title author; /*may go change in opposite order or become optional*/
+	title author 
+	|author title
+	|title
+	|author; 
 title:
-	YY_CS_TITLE {puts("\\title{");}/*vars*/{fputs("}",stdout);};
+	YY_CS_TITLE {puts("\\title{");} vars {fputs("}",stdout);};
 author:
 	YY_CS_AUTHOR {puts("\\author{");} vars {fputs("}",stdout);};
 	
@@ -75,18 +80,18 @@ story:
 	| label {puts("%Label found");} story
 	| conditional {puts("%Conditional found");} story
 	| tagged-word story
-	/**| scenelist story*/
-	|;
+	| scenelist story
+	| %empty;
 scenelist:
-	  YY_CS_SCENE_LIST blockofwords;
+          YY_CS_SCENE_LIST blockofwords;
 
 blockofwords: YY_CS_PINDENT blockofwords YY_CS_NINDENT
-	     |words;
+        | YY_CS_PINDENT words YY_CS_NINDENT;
 words:
 	YY_CS_STRING{puts($1);} words
 	| YY_CS_STRING{puts($1);};
 vars:
-	|YY_CS_VAR{puts($1);} vars
+	YY_CS_VAR{puts($1);} vars
 	| YY_CS_VAR{puts($1);};
 tagged-word:
 	      YY_CS_STRING {puts($1);} 
@@ -95,13 +100,13 @@ tagged-word:
              
 tagged-string:
 		tagged-word tagged-string
-		|;
+		| %empty;
 		
 break:
     YY_CS_FINISH {puts("%Finish found");}
   | goto         {puts("%Goto found");}
   | goto-scene   {puts("%Goto-scene found");}
-  | ;
+  | %empty ;
 
 assignment:
 	   YY_CS_SET YY_CS_VAR arithmetic-expression;
@@ -111,11 +116,11 @@ conditional:
 
 else-if-continuation:
     YY_CS_ELSEIF logical-expression block else-if-continuation
-  | ;
+  | %empty ;
 
 else-continuation:
 	     YY_CS_ELSE block
-	   | ;
+	   | %empty;
 
 block:
         YY_CS_PINDENT story break YY_CS_NINDENT 
@@ -149,11 +154,11 @@ arithmetic-term:
 
 params:
              arithmetic-expression ',' params
-           | ;
+           | %empty ;
 
 arithmetic-remainder:
 	     arithmetic-operator arithmetic-expression
-	   | ;
+	   | %empty ;
 
 logical-expression:
 	  relational-expression logical-operator relational-expression
