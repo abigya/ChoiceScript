@@ -24,31 +24,6 @@ CHAR    [^[:space:]\x1\x2[]
 
 %%
 
- //%x incl
- //%%
-//include BEGIN(incl);
-//[a-z]+   ECHO;
-//[^a-z\n]*\n? ECHO;
-//<incl>[ \t]*
-//<incl>[^ \t\n]+ {
-/*yyin = fopen(yytext,"r");
-	if(!yyin){
-		error("file not found\n");
-	}	
-	yypush_buffer_state(yy_create_buffer(yyin,YY_BUF_SIZE));
-	BEGIN(INITIAL);
-}
-<<EOF>>{/*
-	yypop_buffer_state();
-	if(!YY_CURRENT_BUFFER){
-		yyterminate();
-	}
-
-
-
-
-	*/ //}
-
 
 {EOL}           { BEGIN(INITIAL); /* Remove line breaks */ }
 [[:blank:]]     /* Remove single spaces */
@@ -57,92 +32,92 @@ CHAR    [^[:space:]\x1\x2[]
 <<EOF>>	        { adjustIndent(""); if (brace_balance == 0) yyterminate(); /* End of file */ };
 
 "*comment".*$   /* comment */
-\x1             { puts("%{"); brace_balance++; return YY_CS_PINDENT;}
-\x2		{ puts("%}"); brace_balance--; return YY_CS_NINDENT;}
+\x1             { puts("%{"); brace_balance++; return YY_PINDENT;}
+\x2		{ puts("%}"); brace_balance--; return YY_NINDENT;}
 
-<EXPR>{INT}   	{ printf("%%INT(%d)\n", atoi(yytext)); yylval.i = atoi(yytext); return YY_CS_INT;}
-<EXPR>{FLT}   	{ printf("%%FLOAT(%.2f)\n", atof(yytext)); yylval.d = atoi(yytext); return YY_CS_FLOAT; }
-<EXPR>"and"	{ puts("%AND"); return YY_CS_AND;}
-<EXPR>"+" 	|
+<EXPR>{INT}   	{ printf("%%INT(%d)\n", atoi(yytext)); yylval.i = atoi(yytext); return YY_INT;}
+<EXPR>{FLT}   	{ printf("%%FLOAT(%.2f)\n", atof(yytext)); yylval.d = atoi(yytext); return YY_FLOAT; }
+<EXPR>"and"	{ fprintf(stderr,"AND"); return YY_AND;}
+<EXPR>"+" 	{ return yytext[0];}
 <EXPR>"-"	{ return yytext[0];}
-<EXPR>"/"	|
-<EXPR>"*" 	|
-<EXPR>">" 	|
-<EXPR>"<"	|
-<EXPR>"=" 	|
-<EXPR>"&"	|
-<EXPR>','       |
-<EXPR>"("	|
+<EXPR>"/"	{ return yytext[0];}
+<EXPR>"*" 	{ return yytext[0];}
+<EXPR>">" 	{ return yytext[0];}
+<EXPR>"<"	{ return yytext[0];}
+<EXPR>"=" 	{ return yytext[0];}
+<EXPR>"&"	{ return yytext[0];}
+<EXPR>','       { return yytext[0];}
+<EXPR>"("	{ return yytext[0];}
 <EXPR>")"       { return yytext[0];}
  /**possibly missing <= >= != OR NOT**/
 
-"*choice"	{puts("%CHOICE"); return YY_CS_CHOICE; }
-"*create"	{puts("%CREATE"); BEGIN(EXPR); return YY_CS_CREATE; }
-"*else"		{puts("%ELSE"); return YY_CS_ELSE; }
-"*elseif"	{puts("%ELIF"); BEGIN(EXPR); return YY_CS_ELSEIF; }	
-"*finish"	{return YY_CS_FINISH; }
-"*goto"		{puts("%GOTO"); BEGIN(EXPR); return YY_CS_GOTO; }
-"*goto_scene"	{BEGIN(EXPR); return YY_CS_GOTO_SCENE; }
-"*if"		{puts("%IF"); BEGIN(EXPR); return YY_CS_IF; }
-"*label"	{puts("%LABEL"); BEGIN(EXPR); return YY_CS_LABEL; }
-"*scene_list"	{puts("%SCENE_LIST"); return YY_CS_SCENE_LIST; }
-"*set"		{puts("%SET"); BEGIN(EXPR); return YY_CS_SET; }
+"*choice"	{fprintf(stderr,"CHOICE"); return YY_CHOICE; }
+"*create"	{fprintf(stderr,"CREATE"); BEGIN(EXPR); return YY_CREATE; }
+"*else"		{fprintf(stderr,"ELSE"); return YY_ELSE; }
+"*elseif"	{fprintf(stderr,"ELIF"); BEGIN(EXPR); return YY_ELSEIF; }	
+"*finish"	{return YY_FINISH; }
+"*goto"		{fprintf(stderr,"GOTO"); BEGIN(EXPR); return YY_GOTO; }
+"*goto_scene"	{BEGIN(EXPR); return YY_GOTO_SCENE; }
+"*if"		{fprintf(stderr,"IF"); BEGIN(EXPR); return YY_IF; }
+"*label"	{fprintf(stderr,"LABEL"); BEGIN(EXPR); return YY_LABEL; }
+"*scene_list"	{fprintf(stderr,"SCENE_LIST"); return YY_SCENE_LIST; }
+"*set"		{fprintf(stderr,"SET"); BEGIN(EXPR); return YY_SET; }
 		
-"*image"	{puts("%~image command"); return YY_CS_IMAGE;}
+"*image"	{fprintf(stderr,"image command"); return YY_IMAGE;}
 		
-"*line_break"	{puts("%~line_break command"); return YY_CS_LINE_BREAK;}
+"*line_break"	{fprintf(stderr,"line_break command"); return YY_LINE_BREAK;}
 			
-"*input_text"	{puts("%~input_text command"); return YY_CS_INPUT_TEXT;}
+"*input_text"	{fprintf(stderr,"input_text command"); return YY_INPUT_TEXT;}
 						
-"*input_number"	{puts("%~input_number command"); return YY_CS_INPUT_NUMBER;}
+"*input_number"	{fprintf(stderr,"input_number command"); return YY_INPUT_NUMBER;}
 						
-"*rand"		{puts("%~rand command");return YY_CS_RAND;}
+"*rand"		{fprintf(stderr,"rand command");return YY_RAND;}
 			
-"*stat_chart"	{puts("%~stat_chart command");return YY_CS_STAT_CHART;}		
+"*stat_chart"	{fprintf(stderr,"stat_chart command");return YY_STAT_CHART;}		
 			
-"*bug"		{puts("%~bug command");return YY_CS_BUG;}
+"*bug"		{fprintf(stderr,"bug command");return YY_BUG;}
 		
-"*page_break"	{puts("%~page_break command"); return YY_CS_PAGE_BREAK;}
+"*page_break"	{fprintf(stderr,"page_break command"); return YY_PAGE_BREAK;}
 			
-"*hide_reuse"	{puts("%~hide_reuse command");return YY_CS_HIDE_REUSE;}
+"*hide_reuse"	{fprintf(stderr,"hide_reuse command");return YY_HIDE_REUSE;}
 			
-"*disable_reuse" {puts("%~disable_reuse command");return YY_CS_DISABLE_REUSE;}
+"*disable_reuse" {fprintf(stderr,"disable_reuse command");return YY_DISABLE_REUSE;}
 			
-"*gosub_scene"	{puts("%~gosub_scene command");return YY_CS_GOSUB_SCENE;}
+"*gosub_scene"	{fprintf(stderr,"gosub_scene command");return YY_GOSUB_SCENE;}
 			
-"*gosub"	{puts("%~gosub command");return YY_CS_GOSUB;}
+"*gosub"	{fprintf(stderr,"gosub command");return YY_GOSUB;}
 			
-"*return"	{puts("%~return command"); return YY_CS_RETURN;}
+"*return"	{fprintf(stderr,"return command"); return YY_RETURN;}
 			
-"*ending"	{puts("%~ending command");return YY_CS_ENDING;}
+"*ending"	{fprintf(stderr,"ending command");return YY_ENDING;}
 			
-"*link"		{ puts("%~link command"); return YY_CS_LINK;}
-"*title"	{ puts("%~title command"); BEGIN(EXPR);return YY_CS_TITLE;}
-"*author"	{ puts("%~author command");BEGIN(EXPR); return YY_CS_AUTHOR;}
+"*link"		{ fprintf(stderr,"link command"); return YY_LINK;}
+"*title"	{ fprintf(stderr,"title command"); BEGIN(EXPR);return YY_TITLE;}
+"*author"	{ fprintf(stderr,"author command");BEGIN(EXPR); return YY_AUTHOR;}
 
 #.+$            { printf("%%CASE(%s)\n", strtok(yytext + 1, "\n\r"));
                   yylval.s = my_strdup( strtok(yytext + 1, "\n\r"));
-                  return YY_CS_CASE; }
+                  return YY_CASE; }
 
  /* This part needs fixing */
-"[b]" 		{puts("%begin bold");return YY_CS_BEGINBOLD;}
-"[/b]"           {puts("%end bold"); return YY_CS_ENDBOLD;}
-"[i]" 		{puts("%begin italics");return YY_CS_BEGINITALICS;}
-"[/i]"           {puts("%end italics"); return YY_CS_ENDITALICS;}
+"[b]" 		{fprintf(stderr,"begin bold");return YY_BEGINBOLD;}
+"[/b]"           {fprintf(stderr,"end bold"); return YY_ENDBOLD;}
+"[i]" 		{fprintf(stderr,"begin italics");return YY_BEGINITALICS;}
+"[/i]"           {fprintf(stderr,"end italics"); return YY_ENDITALICS;}
 
-<EXPR>"#{"[^}]+"}"      { puts("%Index"); }
+<EXPR>"#{"[^}]+"}"      { puts("Index"); }
 <EXPR>"$"+"{"{CHAR}+"}" { puts("%Reference");}
 
 <EXPR>{CHAR}+ { printf("%%VAR(%s)\n", yytext);
-                      yylval.s = my_strdup(yytext); return YY_CS_VAR; }
+                      yylval.s = my_strdup(yytext); return YY_VAR; }
 {CHAR}+ { printf("%%STR(%s)\n", yytext);
-                      yylval.s = my_strdup(yytext); return YY_CS_STRING; }
+                      yylval.s = my_strdup(yytext); return YY_STRING; }
 
 
  
-\$![{a-zA-Z}]+$	{ puts("%capitalize first letter of string");}
-\$!![{a-zA-Z}]+$ { puts("%capitalize the entire string");}
-\$[{a-zA-Z}]+$	{ puts("%quoted string");}
+\$![{a-zA-Z}]+$	{ fprintf(stderr,"capitalize first letter of string");}
+\$!![{a-zA-Z}]+$ { fprintf(stderr,"capitalize the entire string");}
+\$[{a-zA-Z}]+$	{ fprintf(stderr,"quoted string");}
 
 %%
 
