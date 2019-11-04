@@ -23,6 +23,33 @@ CHAR    [^[:space:]\x1\x2[]
 %s 	EXPR
 
 %%
+
+ //%x incl
+ //%%
+//include BEGIN(incl);
+//[a-z]+   ECHO;
+//[^a-z\n]*\n? ECHO;
+//<incl>[ \t]*
+//<incl>[^ \t\n]+ {
+/*yyin = fopen(yytext,"r");
+	if(!yyin){
+		error("file not found\n");
+	}	
+	yypush_buffer_state(yy_create_buffer(yyin,YY_BUF_SIZE));
+	BEGIN(INITIAL);
+}
+<<EOF>>{/*
+	yypop_buffer_state();
+	if(!YY_CURRENT_BUFFER){
+		yyterminate();
+	}
+
+
+
+
+	*/ //}
+
+
 {EOL}           { BEGIN(INITIAL); /* Remove line breaks */ }
 [[:blank:]]     /* Remove single spaces */
 ^[[:blank:]]+   { adjustIndent(yytext); /* Indent */ }
