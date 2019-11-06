@@ -7,6 +7,7 @@
   void adjustIndent(char*); 
   char *my_strdup(const char *ptr);
   int brace_balance = 0; /* Maintain the balance of braces */
+  char* source = "startup.txt";
 %}
 
 
@@ -19,6 +20,7 @@ D	[[:digit:]]
 INT     [+-]?{D}+
 FLT     [+-]?(({D}+"."{D}*)|("."{D}+))
 CHAR    [^[:space:]\x1\x2[]
+
 
 %s 	EXPR
 
@@ -50,6 +52,7 @@ CHAR    [^[:space:]\x1\x2[]
 <EXPR>"("	{ return yytext[0];}
 <EXPR>")"       { return yytext[0];}
  /**possibly missing <= >= != OR NOT**/
+
 
 "*choice"	{fprintf(stderr,"CHOICE"); return YY_CHOICE; }
 "*create"	{fprintf(stderr,"CREATE"); BEGIN(EXPR); return YY_CREATE; }
@@ -108,11 +111,11 @@ CHAR    [^[:space:]\x1\x2[]
 <EXPR>"#{"[^}]+"}"      { puts("Index"); }
 <EXPR>"$"+"{"{CHAR}+"}" { puts("%Reference");}
 
-<EXPR>{CHAR}+ { printf("%%VAR(%s)\n", yytext);
+<EXPR>{CHAR}+ { fprintf(stderr,"%%VAR(%s)\n", yytext);
                       yylval.s = my_strdup(yytext); return YY_VAR; }
-{CHAR}+ { printf("%%STR(%s)\n", yytext);
+{CHAR}+ { fprintf(stderr,"%%STR(%s)\n", yytext);
                       yylval.s = my_strdup(yytext); return YY_STRING; }
-
+	
 
  
 \$![{a-zA-Z}]+$	{ fprintf(stderr,"capitalize first letter of string");}
@@ -146,5 +149,27 @@ char *my_strdup(const char *ptr){
    }
    return check;
 		
+}
+void import(char* file){
+ char* fullfile = malloc(strlen(file)+strlen(".txt")+1);
+ strcpy(fullfile, file);
+ strcat(fullfile, ".txt");
+ if (!strcmp(fullfile,source)){
+	fprintf(stderr,"skipped(%s)\n\n",fullfile);
+	free(fullfile);
+	return;
+ }
+ return;
+ yyin = fopen(fullfile,"r");
+ fprintf(stderr,"import(%s)\n\n",fullfile);
+ if (!yyin){
+	perror(fullfile);
+	free(fullfile);
+	return;
+  }
+ /*yyparse();	
+ /*yypush_buffer_state(yy_create_buffer(yyin,YY_BUF_SIZE));*/
+ free(fullfile);
+
 }
 

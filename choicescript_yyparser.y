@@ -1,8 +1,11 @@
 %{
 	#include <stdlib.h>
 	#include <stdio.h>
+	#include <string.h>
 	void yyerror(char*);
+	void import(char*);
 	int yylex();
+	
 %}
 %union{
 	int i;
@@ -36,6 +39,7 @@
 %token YY_RETURN
 %token YY_ENDING
 %token YY_LINK
+%token YY_URL
 %token YY_AND
 %token<s> YY_STRING
 %token<s> YY_VAR
@@ -60,6 +64,7 @@
 %%
 book:
 	{puts("\\documentclass{book}");
+	 puts("\\usepackage{hyperref}");
          puts("\\begin{document}");
         puts("\\date{}");}
 	preamble {puts("\\maketitle");}
@@ -81,6 +86,8 @@ story:
 	| conditional {fprintf(stderr,"Conditional found");} story
 	| tagged-word story
 	| scenelist story
+	| link story
+	| page_break story
 	| %empty;
 scenelist:
           YY_SCENE_LIST blockofwords;
@@ -88,8 +95,9 @@ scenelist:
 blockofwords: YY_PINDENT blockofwords YY_NINDENT
         | YY_PINDENT words YY_NINDENT;
 words:
-	YY_STRING{puts($1);} words
-	| YY_STRING{puts($1);};
+	YY_STRING{import($1);} words
+	| YY_STRING{import($1);};
+
 vars:
 	YY_VAR{puts($1);} vars
 	| YY_VAR{puts($1);};
@@ -101,7 +109,7 @@ tagged-word:
 tagged-string:
 		tagged-word tagged-string
 		| %empty;
-		
+	
 break:
     YY_FINISH {fprintf(stderr,"Finish found");}
   | goto         {fprintf(stderr,"Goto found");}
@@ -109,7 +117,8 @@ break:
   | %empty ;
 
 assignment:
-	   YY_SET YY_VAR arithmetic-expression;
+	   YY_SET YY_VAR arithmetic-expression
+	   | YY_CREATE YY_VAR arithmetic-expression;
 
 conditional:
     YY_IF logical-expression block else-if-continuation else-continuation;
@@ -190,6 +199,12 @@ goto-scene:
 
 label: 
 	YY_LABEL YY_VAR {printf("\\newpage\n\\marginpar{Label ``%s''}\\label{%s}\n\n",$2,$2);};
+page_break:
+	YY_PAGE_BREAK {printf("\\cleardoublepage\n");};
+link:
+	YY_LINK YY_STRING {printf("\\url{%s}\n\n",$2);};
+
 
 %%
+
 
