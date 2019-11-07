@@ -88,7 +88,7 @@ CHAR    [^[:space:]\x1\x2[]
 			
 "*gosub_scene"	{fprintf(stderr,"gosub_scene command");return YY_GOSUB_SCENE;}
 			
-"*gosub"	{fprintf(stderr,"gosub command");return YY_GOSUB;}
+"*gosub"	{fprintf(stderr,"gosub command");BEGIN(EXPR);return YY_GOSUB;}
 			
 "*return"	{fprintf(stderr,"return command"); return YY_RETURN;}
 			

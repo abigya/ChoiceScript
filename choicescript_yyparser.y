@@ -92,6 +92,7 @@ story:
 	| scenelist story
 	| link story
 	| page_break story
+	| break story
 	| %empty;
 scenelist:
           YY_SCENE_LIST blockofwords;
@@ -116,8 +117,11 @@ tagged-string:
 	
 break:
     YY_FINISH {fprintf(stderr,"Finish found");}
+  | YY_ENDING {fprintf(stderr,"Ending found");}
+  | YY_RETURN {fprintf(stderr,"Return found");}
   | goto         {fprintf(stderr,"Goto found");}
   | goto-scene   {fprintf(stderr,"Goto-scene found");}
+  | gosub         {fprintf(stderr,"gosub found");}
   | %empty ;
 
 assignment:
@@ -197,6 +201,8 @@ case:
 
 goto:
 	YY_GOTO YY_VAR  {printf("To continue, go to page \\pageref{%s}.\n",$2);};
+gosub:
+	YY_GOSUB YY_VAR  {printf("To continue, go to page \\pageref{%s}.\n",$2);};
 
 goto-scene:
 	YY_GOTO_SCENE YY_VAR;
@@ -207,7 +213,6 @@ page_break:
 	YY_PAGE_BREAK {printf("\\cleardoublepage\n");};
 link:
 	YY_LINK YY_STRING {printf("\\url{%s}\n\n",$2);};
-
 
 %%
 

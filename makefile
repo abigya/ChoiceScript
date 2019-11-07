@@ -16,10 +16,10 @@ lex.yy.c: choicescript_yylexer.l
 	$(LEX) -i choicescript_yylexer.l
 
 test: $(BIN)
-	(cd sample; ../$(BIN) < death.txt) 
+	(cd sample; ../$(BIN) <ending.txt) 
 
 latex: $(BIN)
-	$(BIN) < sample/startup.txt > startup.tex 
+	$(BIN) < sample/ending.txt > ending.tex 
 
 clean:
 	rm -f $(OBJS) $(BIN) lex.yy.c csparser.c csparser.h startup.tex variables.aux variables.log variables.tex variables.pdf
