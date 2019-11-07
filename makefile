@@ -16,7 +16,7 @@ lex.yy.c: choicescript_yylexer.l
 	$(LEX) -i choicescript_yylexer.l
 
 test: $(BIN)
-	(cd sample; ../$(BIN) < animal.txt) 
+	(cd sample; ../$(BIN) < death.txt) 
 
 latex: $(BIN)
 	$(BIN) < sample/startup.txt > startup.tex 

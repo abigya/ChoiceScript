@@ -167,8 +167,10 @@ void import(char* file){
 	free(fullfile);
 	return;
   }
+  fprintf(stderr,"(%s) is opened\n\n",fullfile);
+  	
  /*yyparse();	
- /*yypush_buffer_state(yy_create_buffer(yyin,YY_BUF_SIZE));*/
+ yypush_buffer_state(yy_create_buffer(yyin,YY_BUF_SIZE));*/
  free(fullfile);
 
 }
