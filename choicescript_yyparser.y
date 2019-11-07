@@ -68,7 +68,11 @@ book:
          puts("\\begin{document}");
         puts("\\date{}");}
 	preamble {puts("\\maketitle");}
-        story {puts("\\end{document}");};
+        story {puts("\\end{document}");}
+        |{puts("\\documentclass{book}");
+	 puts("\\usepackage{hyperref}");
+         puts("\\begin{document}");
+        puts("\\date{}");}story {puts("\\end{document}");};
 preamble:
 	title author 
 	|author title
