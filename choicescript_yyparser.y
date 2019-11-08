@@ -95,6 +95,7 @@ story:
         | goto         {fprintf(stderr,"Goto found");} story
   	| goto-scene   {fprintf(stderr,"Goto-scene found");}story
   	| gosub         {fprintf(stderr,"gosub found");}story
+	| gosub-scene   {fprintf(stderr,"gosub-scene found");}story
 	| %empty;
 scenelist:
           YY_SCENE_LIST blockofwords;
@@ -205,6 +206,8 @@ gosub:
 
 goto-scene:
 	YY_GOTO_SCENE YY_VAR;
+gosub-scene:
+	YY_GOSUB_SCENE YY_VAR;
 
 label: 
 	YY_LABEL YY_VAR {printf("\\newpage\n\\marginpar{Label ``%s''}\\label{%s}\n\n",$2,$2);};

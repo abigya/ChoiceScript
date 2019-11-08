@@ -86,7 +86,7 @@ CHAR    [^[:space:]\x1\x2[]
 			
 "*disable_reuse" {/*fprintf(stderr,"disable_reuse command");*/return YY_DISABLE_REUSE;}
 			
-"*gosub_scene"	{/*fprintf(stderr,"gosub_scene command");*/return YY_GOSUB_SCENE;}
+"*gosub_scene"	{/*fprintf(stderr,"gosub_scene command");*/BEGIN(EXPR);return YY_GOSUB_SCENE;}
 			
 "*gosub"	{/*fprintf(stderr,"gosub command");*/BEGIN(EXPR);return YY_GOSUB;}
 			
