@@ -22,7 +22,7 @@ latex: $(BIN)
 	$(BIN) < sample/gosub.txt > gosub.tex 
 
 clean:
-	rm -f $(OBJS) $(BIN) lex.yy.c csparser.c csparser.h startup.tex variables.aux variables.log variables.tex variables.pdf
+	rm -f $(OBJS) $(BIN) lex.yy.c csparser.c csparser.h *.tex *.aux *.log *.pdf *.out
 
 
 
