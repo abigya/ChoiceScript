@@ -92,7 +92,9 @@ story:
 	| scenelist story
 	| link story
 	| page_break story
-	| break story
+        | goto         {fprintf(stderr,"Goto found");} story
+  	| goto-scene   {fprintf(stderr,"Goto-scene found");}story
+  	| gosub         {fprintf(stderr,"gosub found");}story
 	| %empty;
 scenelist:
           YY_SCENE_LIST blockofwords;
@@ -119,9 +121,6 @@ break:
     YY_FINISH {fprintf(stderr,"Finish found");}
   | YY_ENDING {fprintf(stderr,"Ending found");}
   | YY_RETURN {fprintf(stderr,"Return found");}
-  | goto         {fprintf(stderr,"Goto found");}
-  | goto-scene   {fprintf(stderr,"Goto-scene found");}
-  | gosub         {fprintf(stderr,"gosub found");}
   | %empty ;
 
 assignment:
