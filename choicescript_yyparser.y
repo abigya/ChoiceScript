@@ -84,18 +84,18 @@ author:
 	YY_AUTHOR {puts("\\author{");} vars {fputs("}",stdout);};
 	
 story:
-	  assignment {fprintf(stderr,"Assignment found");} story
-	| choice {fprintf(stderr,"Choice found");} story
-	| label {fprintf(stderr,"Label found");} story
-	| conditional {fprintf(stderr,"Conditional found");} story
+	  assignment {fprintf(stderr,"Assignment found\n");} story
+	| choice {fprintf(stderr,"Choice found\n");} story
+	| label {fprintf(stderr,"Label found\n");} story
+	| conditional {fprintf(stderr,"Conditional found\n");} story
 	| tagged-word story
 	| scenelist story
 	| link story
 	| page_break story
-        | goto         {fprintf(stderr,"Goto found");} story
-  	| goto-scene   {fprintf(stderr,"Goto-scene found");}story
-  	| gosub         {fprintf(stderr,"gosub found");}story
-	| gosub-scene   {fprintf(stderr,"gosub-scene found");}story
+        | goto         {fprintf(stderr,"Goto found\n");} story
+  	| goto-scene   {fprintf(stderr,"Goto-scene found\n");}story
+  	| gosub         {fprintf(stderr,"gosub found\n");}story
+	| gosub-scene   {fprintf(stderr,"gosub-scene found\n");}story
 	| %empty;
 scenelist:
           YY_SCENE_LIST blockofwords;
@@ -119,9 +119,9 @@ tagged-string:
 		| %empty;
 	
 break:
-    YY_FINISH {fprintf(stderr,"Finish found");}
-  | YY_ENDING {fprintf(stderr,"Ending found");}
-  | YY_RETURN {fprintf(stderr,"Return found");}
+    YY_FINISH {fprintf(stderr,"Finish found\n");}
+  | YY_ENDING {fprintf(stderr,"Ending found\n");}
+  | YY_RETURN {fprintf(stderr,"Return found\n");}
   | %empty ;
 
 assignment:
@@ -197,7 +197,7 @@ cases:
 	| case;
 
 case:
-	YY_CASE {printf("\\item[%s]\n",$1);}block {puts("%Case found");};
+YY_CASE {printf("\\item[%s]\n",$1);}block {fputs("Case found\n", stderr);};
 
 goto:
 	YY_GOTO YY_VAR  {printf("To continue, go to page \\pageref{%s}.\n",$2);};
