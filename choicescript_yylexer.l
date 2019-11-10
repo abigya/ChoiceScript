@@ -27,19 +27,27 @@ CHAR    [^[:space:]\x1\x2[]
 %%
 
 
+"*comment".*$   /* comment */
 {EOL}           { BEGIN(INITIAL); /* Remove line breaks */ }
 [[:blank:]]     /* Remove single spaces */
 ^[[:blank:]]+   { adjustIndent(yytext); /* Indent */ }
 ^[[:^space:]]+  { BEGIN(INITIAL); yyless(0); adjustIndent(""); /* Outdent */ }
-<<EOF>>	        { adjustIndent(""); if (brace_balance == 0) yyterminate(); /* End of file */ };
+<<EOF>>	        { /* End of file */
+  if (brace_balance == 0) { /* Return to the includer */
+    yypop_buffer_state();
+    if (!YY_CURRENT_BUFFER) yyterminate();
+    BEGIN(INITIAL); 
+  } else { /* "unread" the missing unindents */
+    adjustIndent("");
+  }
+ };
 
-"*comment".*$   /* comment */
-\x1             { puts("%{"); brace_balance++; return YY_PINDENT;}
-\x2		{ puts("%}"); brace_balance--; return YY_NINDENT;}
+\x1             { fputs("{\n", stderr); brace_balance++; return YY_PINDENT;}
+\x2		{ fputs("}\n", stderr); brace_balance--; return YY_NINDENT;}
 
-<EXPR>{INT}   	{ printf("%%INT(%d)\n", atoi(yytext)); yylval.i = atoi(yytext); return YY_INT;}
-<EXPR>{FLT}   	{ printf("%%FLOAT(%.2f)\n", atof(yytext)); yylval.d = atoi(yytext); return YY_FLOAT; }
-<EXPR>"and"	{ /*fprintf(stderr,"AND"); */return YY_AND;}
+<EXPR>{INT}   	{ yylval.i = atoi(yytext); return YY_INT;}
+<EXPR>{FLT}   	{ yylval.d = atoi(yytext); return YY_FLOAT; }
+<EXPR>"and"	{ return YY_AND;}
 <EXPR>"+" 	{ return yytext[0];}
 <EXPR>"-"	{ return yytext[0];}
 <EXPR>"/"	{ return yytext[0];}
@@ -54,7 +62,7 @@ CHAR    [^[:space:]\x1\x2[]
  /**possibly missing <= >= != OR NOT**/
 
 
-"*choice"	{/*/*fprintf(stderr,"CHOICE");*/ return YY_CHOICE; }
+"*choice"	{fprintf(stderr,"CHOICE\n"); return YY_CHOICE; }
 "*create"	{/*/*fprintf(stderr,"CREATE");*/ BEGIN(EXPR); return YY_CREATE; }
 "*else"		{/*/*fprintf(stderr,"ELSE");*/ return YY_ELSE; }
 "*elseif"	{/*/*fprintf(stderr,"ELIF");*/ BEGIN(EXPR); return YY_ELSEIF; }	
@@ -111,9 +119,9 @@ CHAR    [^[:space:]\x1\x2[]
 <EXPR>"#{"[^}]+"}"      { puts("Index"); }
 <EXPR>"$"+"{"{CHAR}+"}" { puts("%Reference");}
 
-<EXPR>{CHAR}+ { /*fprintf(stderr,"%%VAR(%s)\n", yytext);*/
+<EXPR>{CHAR}+ { fprintf(stderr,"%%VAR(%s)\n", yytext);
                       yylval.s = my_strdup(yytext); return YY_VAR; }
-{CHAR}+ { /*fprintf(stderr,"%%STR(%s)\n", yytext);*/
+{CHAR}+ { fprintf(stderr,"%%STR(%s)\n", yytext);
                       yylval.s = my_strdup(yytext); return YY_STRING; }
 	
 
@@ -142,36 +150,33 @@ void adjustIndent(char* text){
   for (int i = 0; i < depth - new_depth; i++) unput('\x2');
   depth = new_depth;
 }
+
 char *my_strdup(const char *ptr){
    void* check = strdup(ptr);
-   if (check==NULL){
-	abort();
-   }
+   if (!check) abort();
    return check;
-		
 }
-void import(char* file){
- char* fullfile = malloc(strlen(file)+strlen(".txt")+1);
+
+void import(char* file) {
+  /* malloc() must be replaced with a safe function */
+ char* fullfile = malloc(strlen(file) + strlen(".txt") + 1);
  strcpy(fullfile, file);
  strcat(fullfile, ".txt");
- if (!strcmp(fullfile,source)){
-	fprintf(stderr,"skipped(%s)\n\n",fullfile);
+ if (!strcmp(fullfile, source)){
+	fprintf(stderr, "skipped(%s)\n", fullfile);
 	free(fullfile);
 	return;
  }
- return;
- yyin = fopen(fullfile,"r");
- fprintf(stderr,"import(%s)\n\n",fullfile);
- if (!yyin){
-	perror(fullfile);
-	free(fullfile);
-	return;
-  }
-  fprintf(stderr,"(%s) is opened\n\n",fullfile);
-  	
- /*yyparse();	
- yypush_buffer_state(yy_create_buffer(yyin,YY_BUF_SIZE));*/
- free(fullfile);
+ FILE *f = fopen(fullfile, "r");
+ if (!f) {
+   perror(fullfile);
+   free(fullfile);
+   return;
+ }
+ fprintf(stderr, "(%s) is opened\n", fullfile);
 
+ yylineno = 1;
+ yypush_buffer_state(yy_create_buffer(f, YY_BUF_SIZE)); 
+ free(fullfile);
 }
 
