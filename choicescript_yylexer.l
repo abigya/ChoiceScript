@@ -5,6 +5,7 @@
   extern int yyparse(void);
 #endif
   void adjustIndent(char*); 
+  void *safe_malloc(size_t size);
   char *my_strdup(const char *ptr);
   int brace_balance = 0; /* Maintain the balance of braces */
   char* source = "startup.txt";
@@ -157,9 +158,16 @@ char *my_strdup(const char *ptr){
    return check;
 }
 
+void *safe_malloc(size_t size){
+    void* result = malloc(size);
+    if(NULL==result){
+	abort();
+    }
+    return result;
+}
+
 void import(char* file) {
-  /* malloc() must be replaced with a safe function */
- char* fullfile = malloc(strlen(file) + strlen(".txt") + 1);
+ char* fullfile = safe_malloc(strlen(file) + strlen(".txt") + 1);
  strcpy(fullfile, file);
  strcat(fullfile, ".txt");
  if (!strcmp(fullfile, source)){
@@ -174,7 +182,6 @@ void import(char* file) {
    return;
  }
  fprintf(stderr, "(%s) is opened\n", fullfile);
-
  yylineno = 1;
  yypush_buffer_state(yy_create_buffer(f, YY_BUF_SIZE)); 
  free(fullfile);

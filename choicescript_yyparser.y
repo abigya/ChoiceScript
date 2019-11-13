@@ -4,6 +4,7 @@
 	#include <string.h>
 	void yyerror(char*);
 	void import(char*);
+        void *safe_malloc(size_t size);
 	int yylex();
 %}
 
@@ -114,9 +115,8 @@ blockofscenes:
         | YY_PINDENT scenes YY_NINDENT { $$ = $2; };
 
 scenes:
-/* malloc() must be replaced with a safe function */
-        scenes YY_STRING { $$ = malloc(sizeof(slist)); $$->s = $2; $$->next = $1; }
-        | YY_STRING { $$ = malloc(sizeof(slist)); $$->s = $1; $$->next = NULL; };
+        scenes YY_STRING { $$ = safe_malloc(sizeof(slist)); $$->s = $2; $$->next = $1; }
+        | YY_STRING { $$ = safe_malloc(sizeof(slist)); $$->s = $1; $$->next = NULL; };
 
 vars:
 	YY_VAR{puts($1);} vars
