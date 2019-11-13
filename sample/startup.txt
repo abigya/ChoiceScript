@@ -15,7 +15,7 @@
 *comment "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
 *comment either express or implied.
 
-*title My First ChoiceScript Game
+*title My First: ChoiceScript Game
 *author Anonymous
 *scene_list
   startup

@@ -91,14 +91,14 @@ author:
 	
 story:
 	  assignment {fprintf(stderr,"Assignment found\n");} story
-	| choice {fprintf(stderr,"Choice found\n");} story
-	| label {fprintf(stderr,"Label found\n");} story
+	| choice story
+	| label story
 	| conditional {fprintf(stderr,"Conditional found\n");} story
 	| tagged-word story
-	| scenelist   {fprintf(stderr,"scenelist found\n");} story
+	| scenelist story
 	| link story
 	| page_break story
-        | goto         {fprintf(stderr,"Goto found\n");} story
+        | goto story
   	| goto-scene   {fprintf(stderr,"Goto-scene found\n");}story
   	| gosub         {fprintf(stderr,"gosub found\n");}story
 	| gosub-scene   {fprintf(stderr,"gosub-scene found\n");}story
@@ -106,9 +106,12 @@ story:
 	| %empty;
 
 scenelist: YY_SCENE_LIST blockofscenes {
-  for (slist *start = $2; start->next; start = start->next)
+  for (slist *start = $2; start->next; start = start->next){
+    printf("\\chapter{%s}\\label{%s}\n",start->s,start->s);
     import(start->s);
-	  } 
+     
+	fflush(stdout);}
+	  } ;
 
 blockofscenes:
         YY_PINDENT blockofscenes YY_NINDENT { $$ = $2; }
@@ -211,9 +214,9 @@ case:
 YY_CASE {printf("\\item[%s]\n",$1);}block {fputs("Case found\n", stderr);};
 
 goto:
-YY_GOTO YY_VAR  {printf("To continue, go to page \\pageref{%s} to label ``%s''.\n", $2, $2);};
+YY_GOTO YY_VAR  {printf("Go to {\\bf %s} on page \\pageref{%s}.\n", $2, $2);};
 gosub:
-YY_GOSUB YY_VAR  {printf("To continue, go to page \\pageref{%s} to label ``%s''.\n", $2, $2);};
+YY_GOSUB YY_VAR  {printf("Go to {\\bf %s} on page \\pageref{%s}.\n", $2, $2);};
 
 goto-scene:
 	YY_GOTO_SCENE YY_VAR;
@@ -221,7 +224,7 @@ gosub-scene:
 	YY_GOSUB_SCENE YY_VAR;
 
 label: 
-YY_LABEL YY_VAR {printf(/*"\\newpage\n"*/ "\\marginpar{Label ``%s''}\\label{%s}\n\n",$2,$2);};
+YY_LABEL YY_VAR {printf(/*"\\newpage\n"*/ "\\fbox{%s\\label{%s}}\n",$2,$2);};
 page_break:
 	YY_PAGE_BREAK {printf("\\cleardoublepage\n");};
 link:
