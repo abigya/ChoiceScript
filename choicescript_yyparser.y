@@ -6,9 +6,12 @@
 	void import(char*);
         void *safe_malloc(size_t size);
 	int yylex();
+	int level = 0; /* Are we at the top level? */
+	static const char* STARTUP_NAME = "startup";
 %}
 
 %code requires {
+  extern int level;
   typedef struct slist {
     char *s;
     struct slist *next; } slist;
@@ -71,19 +74,29 @@
 %start book
 
 %%
-book:
-	{puts("\\documentclass{book}");
-	 puts("\\usepackage{hyperref}");
-         puts("\\begin{document}");
-         puts("\\date{}");}
-	 preamble {puts("\\maketitle");}
-         story {puts("\\end{document}");};
+book: {
+  if (level == 0) { /* Are we in startup.txt? */
+    puts("\\documentclass{book}");
+    puts("\\usepackage{hyperref}");
+    puts("\\usepackage{fancybox}");
+    puts("\\usepackage{enumitem}");
+    puts("\\begin{document}");
+    puts("\\date{}");}
+ } preamble {
+   puts("\\maketitle");
+ } story {
+   if (level == 0) { /* Are we in startup.txt? */
+     puts("\\end{document}");
+   }
+ };
+
 preamble:
 	title author 
 	|author title
 	|title
 	|author
-	|%empty; 
+	|%empty;
+
 title:
 	YY_TITLE {puts("\\title{");} vars {fputs("}", stdout);};
 author:
@@ -105,52 +118,58 @@ story:
         | YY_ENDING {fprintf(stderr, "Ending found\n");} story
 	| %empty;
 
-scenelist: YY_SCENE_LIST blockofscenes {
-  for (slist *start = $2; start->next; start = start->next){
-    printf("\\chapter{%s}\\label{%s}\n",start->s,start->s);
-    import(start->s);
-     
-	fflush(stdout);}
-	  } ;
+scenelist:
+  YY_SCENE_LIST blockofscenes {
+    for (slist *start = $2; start; start = start->next){
+      if (strcmp(start->s, STARTUP_NAME)) {
+	  printf("\\chapter{%s}\\label{%s}\n", start->s, start->s);
+	  import(start->s);
+	}
+    }
+    puts("\\chapter{Main Matter}\n\n");
+  };
 
 blockofscenes:
         YY_PINDENT blockofscenes YY_NINDENT { $$ = $2; }
         | YY_PINDENT scenes YY_NINDENT { $$ = $2; };
 
 scenes:
-        scenes YY_STRING { $$ = safe_malloc(sizeof(slist)); $$->s = $2; $$->next = $1; }
-        | YY_STRING { $$ = safe_malloc(sizeof(slist)); $$->s = $1; $$->next = NULL; };
+        YY_STRING scenes { $$ = safe_malloc(sizeof(slist));
+	  $$->s = $1; $$->next = $2; }
+        | YY_STRING { $$ = safe_malloc(sizeof(slist));
+	  $$->s = $1; $$->next = NULL; };
 
 vars:
 	YY_VAR{puts($1);} vars
 	| YY_VAR{puts($1);};
+
 tagged-word:
 	      YY_STRING {puts($1);} 
 	      | YY_BEGINBOLD {puts("{\\bf");} tagged-string YY_ENDBOLD {fputs("}",stdout);}
-	      | YY_BEGINITALICS {puts("{\\it");}tagged-string YY_ENDITALICS {fputs("}",stdout);};
+	      | YY_BEGINITALICS {puts("{\\it");} tagged-string YY_ENDITALICS {fputs("}",stdout);};
              
 tagged-string:
 		tagged-word tagged-string
 		| %empty;
 	
 break:
-    YY_FINISH {fprintf(stderr,"Finish found\n");}
-  | YY_RETURN {fprintf(stderr,"Return found\n");}
-  | %empty ;
+     YY_FINISH { puts("$\\diamondsuit$\n\n"); /* Needs work! */} 
+   | YY_RETURN { puts("\n{\\it Go back and continue reading}~$\\hookleftarrow$\n\n"); }
+   | %empty ;
 
 assignment:
 	   YY_SET YY_VAR arithmetic-expression
 	   | YY_CREATE YY_VAR arithmetic-expression;
 
 conditional:
-    YY_IF logical-expression block else-if-continuation else-continuation;
+           YY_IF logical-expression { puts("xxx~?~$\\Rightarrow$"); } block else-if-continuation else-continuation;
 
 else-if-continuation:
-    YY_ELSEIF logical-expression block else-if-continuation
+    YY_ELSEIF logical-expression { puts("xxx~??~$\\Rightarrow$"); } block else-if-continuation
   | %empty ;
 
 else-continuation:
-	     YY_ELSE block
+	     YY_ELSE  { puts("!~$\\Rightarrow$"); } block
 	   | %empty;
 
 block:
@@ -200,7 +219,8 @@ relational-expression:
        | '(' relational-expression ')' ;
 
 choice: 
-	YY_CHOICE {puts("\\begin{description}");}block-cases {puts("\\end{description}");};
+	YY_CHOICE {puts("\\begin{description}[style=nextline]");}
+        block-cases {puts("\\end{description}");};
 
 block-cases:
         YY_PINDENT cases YY_NINDENT
@@ -211,22 +231,26 @@ cases:
 	| case;
 
 case:
-YY_CASE {printf("\\item[%s]\n",$1);}block {fputs("Case found\n", stderr);};
+        YY_CASE {printf("\\item[%s]\n", $1);} block;
 
 goto:
-YY_GOTO YY_VAR  {printf("Go to {\\bf %s} on page \\pageref{%s}.\n", $2, $2);};
+        YY_GOTO YY_VAR  {printf("{$\\triangleleft$~{\\it Go to {\\bf %s} on page \\pageref{%s}.}~$\\triangleright$}\n\n", $2, $2);};
+
 gosub:
-YY_GOSUB YY_VAR  {printf("Go to {\\bf %s} on page \\pageref{%s}.\n", $2, $2);};
+        YY_GOSUB YY_VAR  {printf("\n\n{$\\triangleleft$~{\\it Go to {\\bf %s} on page \\pageref{%s}. Come back here when you are done.}~$\\triangleright$}\n\n", $2, $2);};
 
 goto-scene:
 	YY_GOTO_SCENE YY_VAR;
+
 gosub-scene:
 	YY_GOSUB_SCENE YY_VAR;
 
 label: 
-YY_LABEL YY_VAR {printf(/*"\\newpage\n"*/ "\\fbox{%s\\label{%s}}\n",$2,$2);};
+        YY_LABEL YY_VAR {printf("\\Ovalbox{$\\surd$~%s\\label{%s}}\n",$2,$2);};
+
 page_break:
 	YY_PAGE_BREAK {printf("\\cleardoublepage\n");};
+
 link:
 	YY_LINK YY_STRING {printf("\\url{%s}\n", $2);};
 

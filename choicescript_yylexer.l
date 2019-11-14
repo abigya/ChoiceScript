@@ -8,7 +8,6 @@
   void *safe_malloc(size_t size);
   char *my_strdup(const char *ptr);
   int brace_balance = 0; /* Maintain the balance of braces */
-  char* source = "startup.txt";
 %}
 
 
@@ -36,7 +35,7 @@ CHAR    [^[:space:]\x1\x2[]
 <<EOF>>	        { /* End of file */
   if (brace_balance == 0) { /* Return to the includer */
     yypop_buffer_state();
-    if (!YY_CURRENT_BUFFER) yyterminate();
+    yyterminate();
     BEGIN(INITIAL); 
   } else { /* "unread" the missing unindents */
     adjustIndent("");
@@ -63,7 +62,7 @@ CHAR    [^[:space:]\x1\x2[]
  /**possibly missing <= >= != OR NOT**/
 
 
-"*choice"	{fprintf(stderr,"CHOICE\n"); return YY_CHOICE; }
+"*choice"	{/*fprintf(stderr,"CHOICE\n"); */return YY_CHOICE; }
 "*create"	{/*/*fprintf(stderr,"CREATE");*/ BEGIN(EXPR); return YY_CREATE; }
 "*else"		{/*/*fprintf(stderr,"ELSE");*/ return YY_ELSE; }
 "*elseif"	{/*/*fprintf(stderr,"ELIF");*/ BEGIN(EXPR); return YY_ELSEIF; }	
@@ -133,13 +132,13 @@ CHAR    [^[:space:]\x1\x2[]
 
 %%
 
-int main(void){
+int main(void) {
 	fprintf(stderr, "ChoiceScript -> LaTeX\n");
 	yyparse();
 	return EXIT_SUCCESS;
 }
 
-int yyerror(void){
+int yyerror(void) {
   fprintf(stderr, "(infile):%d: syntax error\n", yylineno);
   exit(EXIT_FAILURE);      
 }
@@ -170,20 +169,19 @@ void import(char* file) {
  char* fullfile = safe_malloc(strlen(file) + strlen(".txt") + 1);
  strcpy(fullfile, file);
  strcat(fullfile, ".txt");
- if (!strcmp(fullfile, source)){
-	fprintf(stderr, "skipped(%s)\n", fullfile);
-	free(fullfile);
-	return;
- }
  FILE *f = fopen(fullfile, "r");
  if (!f) {
    perror(fullfile);
    free(fullfile);
    return;
  }
- fprintf(stderr, "(%s) is opened\n", fullfile);
+ fprintf(stderr, "Opened (%s)\n", fullfile);
  yylineno = 1;
  yypush_buffer_state(yy_create_buffer(f, YY_BUF_SIZE)); 
  free(fullfile);
+ 
+ level = 1;
+ yyparse(); /* Parse the includes recursively */
+ level = 0;
 }
 
