@@ -8,6 +8,7 @@
   void *safe_malloc(size_t size);
   char *my_strdup(const char *ptr);
   int brace_balance = 0; /* Maintain the balance of braces */
+ 
 %}
 
 
@@ -25,7 +26,11 @@ CHAR    [^[:space:]\x1\x2[]
 %s 	EXPR
 
 %%
-
+ FILE *output = fopen("cs.log","a");
+  if (!output) {
+   perror("cs.log");
+   exit(0);	
+ }
 
 "*comment".*$   /* comment */
 {EOL}           { BEGIN(INITIAL); /* Remove line breaks */ }
@@ -62,7 +67,7 @@ CHAR    [^[:space:]\x1\x2[]
  /**possibly missing <= >= != OR NOT**/
 
 
-"*choice"	{/*fprintf(stderr,"CHOICE\n"); */return YY_CHOICE; }
+"*choice"	{fprintf(output,"CHOICE\n"); return YY_CHOICE; }
 "*create"	{/*/*fprintf(stderr,"CREATE");*/ BEGIN(EXPR); return YY_CREATE; }
 "*else"		{/*/*fprintf(stderr,"ELSE");*/ return YY_ELSE; }
 "*elseif"	{/*/*fprintf(stderr,"ELIF");*/ BEGIN(EXPR); return YY_ELSEIF; }	

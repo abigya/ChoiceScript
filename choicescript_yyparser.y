@@ -122,7 +122,7 @@ scenelist:
   YY_SCENE_LIST blockofscenes {
     for (slist *start = $2; start; start = start->next){
       if (strcmp(start->s, STARTUP_NAME)) {
-	  printf("\\chapter{%s}\\label{%s}\n", start->s, start->s);
+	  printf("\\uppercase{\\chapter{%s}\\label{%s}}\n", start->s, start->s);
 	  import(start->s);
 	}
     }
@@ -240,7 +240,7 @@ gosub:
         YY_GOSUB YY_VAR  {printf("\n\n{$\\triangleleft$~{\\it Go to {\\bf %s} on page \\pageref{%s}. Come back here when you are done.}~$\\triangleright$}\n\n", $2, $2);};
 
 goto-scene:
-	YY_GOTO_SCENE YY_VAR;
+	YY_GOTO_SCENE YY_VAR {printf("{$\\triangleleft$~{\\it Go to {\\bf %s} on page \\pageref{%s}.}~$\\triangleright$}\n\n", $2, $2);};
 
 gosub-scene:
 	YY_GOSUB_SCENE YY_VAR;
