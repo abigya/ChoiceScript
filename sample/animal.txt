@@ -18,6 +18,7 @@
 What kind of animal will you be?
 *Choice
   #Lion
+    *image lion.jpg
     *goto claws
   #Tiger
     *label claws

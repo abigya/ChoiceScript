@@ -114,6 +114,7 @@ story:
 	| link story
 	| page_break story
         | goto story
+	| image story
   	| goto-scene   {fprintf(yyout,"Goto-scene found\n");}story
   	| gosub         {fprintf(yyout,"gosub found\n");}story
 	| gosub-scene   {fprintf(yyout,"gosub-scene found\n");}story
@@ -255,6 +256,8 @@ page_break:
 
 link:
 	YY_LINK YY_STRING {fprintf(OUTPUT,"\\url{%s}\n", $2);};
+image:
+	YY_IMAGE YY_STRING {fprintf(OUTPUT,"\\includegraphics[width=\\linewidth]{%s}\n",$2);};
 
 %%
 
