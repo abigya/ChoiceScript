@@ -10,6 +10,7 @@
   int brace_balance = 0; /* Maintain the balance of braces */
   int parse;
   FILE *OUTPUT;
+  FILE *yyout;
  
 %}
 
@@ -65,26 +66,26 @@ CHAR    [^[:space:]\x1\x2[]
 
 
 "*choice"	{fprintf(yyout,"CHOICE\n"); return YY_CHOICE; }
-"*create"	{fprintf(yyout,"CREATE"); BEGIN(EXPR); return YY_CREATE; }
-"*else"		{fprintf(yyout,"ELSE"); return YY_ELSE; }
-"*elseif"	{fprintf(yyout,"ELIF"); BEGIN(EXPR); return YY_ELSEIF; }	
-"*finish"	{fprintf(yyout,"FINISH");return YY_FINISH; }
-"*goto"		{fprintf(yyout,"GOTO");BEGIN(EXPR); return YY_GOTO; }
-"*goto_scene"	{fprintf(yyout,"GOTO_SCENE");BEGIN(EXPR); return 				YY_GOTO_SCENE; }
-"*if"		{fprintf(yyout,"IF");BEGIN(EXPR); return YY_IF; }
-"*label"	{fprintf(yyout,"LABEL");BEGIN(EXPR); return YY_LABEL; }
-"*scene_list"	{fprintf(yyout,"SCENE_LIST");return YY_SCENE_LIST; }
-"*set"		{fprintf(yyout,"SET");BEGIN(EXPR); return YY_SET; }
+"*create"	{fprintf(yyout,"CREATE\n"); BEGIN(EXPR); return YY_CREATE; }
+"*else"		{fprintf(yyout,"ELSE\n"); return YY_ELSE; }
+"*elseif"	{fprintf(yyout,"ELIF\n"); BEGIN(EXPR); return YY_ELSEIF; }	
+"*finish"	{fprintf(yyout,"FINISH\n");return YY_FINISH; }
+"*goto"		{fprintf(yyout,"GOTO\n");BEGIN(EXPR); return YY_GOTO; }
+"*goto_scene"	{fprintf(yyout,"GOTO_SCENE\n");BEGIN(EXPR); return 				YY_GOTO_SCENE; }
+"*if"		{fprintf(yyout,"IF\n");BEGIN(EXPR); return YY_IF; }
+"*label"	{fprintf(yyout,"LABEL\n");BEGIN(EXPR); return YY_LABEL; }
+"*scene_list"	{fprintf(yyout,"SCENE_LIST\n");return YY_SCENE_LIST; }
+"*set"		{fprintf(yyout,"SET\n");BEGIN(EXPR); return YY_SET; }
 		
-"*image"	{fprintf(yyout,"image command");return YY_IMAGE;}
+"*image"	{fprintf(yyout,"image command\n");return YY_IMAGE;}
 		
-"*line_break"	{fprintf(yyout,"line_break command");return YY_LINE_BREAK;}
+"*line_break"	{fprintf(yyout,"line_break command\n");return YY_LINE_BREAK;}
 			
-"*input_text"	{fprintf(yyout,"input_text command");return YY_INPUT_TEXT;}
+"*input_text"	{fprintf(yyout,"input_text command\n");return YY_INPUT_TEXT;}
 						
-"*input_number"	{fprintf(yyout,"input_number command"); return YY_INPUT_NUMBER;}
+"*input_number"	{fprintf(yyout,"input_number command\n"); return YY_INPUT_NUMBER;}
 						
-"*rand"		{fprintf(yyout,"rand command");return YY_RAND;}
+"*rand"		{fprintf(yyout,"rand command\n");return YY_RAND;}
 			
 "*stat_chart"	{fprintf(yyout,"stat_chart command");return 				YY_STAT_CHART;}		
 			
@@ -122,9 +123,11 @@ CHAR    [^[:space:]\x1\x2[]
 <EXPR>"$"+"{"{CHAR}+"}" { fprintf(yyout,"Reference");}
 
 <EXPR>{CHAR}+ { fprintf(yyout,"%%VAR(%s)\n", yytext);
-                      yylval.s = my_strdup(yytext); return YY_VAR; }
+                      yylval.s = my_strdup(yytext); 
+			fprintf(OUTPUT,"%s\n", yytext);return YY_VAR; }
 {CHAR}+ { fprintf(yyout,"%%STR(%s)\n", yytext);
-                      yylval.s = my_strdup(yytext); return YY_STRING; }
+                      yylval.s = my_strdup(yytext); 
+			fprintf(OUTPUT,"%s\n", yytext); return YY_STRING; }
 	
 
  
@@ -138,7 +141,7 @@ int main(void) {
 	yyout = fopen("cs.log","w");
 	OUTPUT = fopen("output.tex","w");
         if (!OUTPUT){
-		perror("startup.tex");
+		perror("output.tex");
 		exit(EXIT_FAILURE);
 	}
 	if (!yyout){

@@ -8,6 +8,8 @@
 	int yylex();
 	int level = 0; /* Are we at the top level? */
 	static const char* STARTUP_NAME = "startup";
+	extern FILE *OUTPUT;
+  	extern FILE *yyout;
 %}
 
 %code requires {
@@ -76,17 +78,17 @@
 %%
 book: {
   if (level == 0) { /* Are we in startup.txt? */
-    puts("\\documentclass{book}");
-    puts("\\usepackage{hyperref}");
-    puts("\\usepackage{fancybox}");
-    puts("\\usepackage{enumitem}");
-    puts("\\begin{document}");
-    puts("\\date{}");}
+    fprintf(OUTPUT,"\\documentclass{book}\n");
+    fprintf(OUTPUT,"\\usepackage{hyperref}\n");
+    fprintf(OUTPUT,"\\usepackage{fancybox}\n");
+    fprintf(OUTPUT,"\\usepackage{enumitem}\n");
+    fprintf(OUTPUT,"\\begin{document}\n");
+    fprintf(OUTPUT,"\\date{}\n");}
  } preamble {
-   puts("\\maketitle");
+   fprintf(OUTPUT,"\\maketitle\n");
  } story {
    if (level == 0) { /* Are we in startup.txt? */
-     puts("\\end{document}");
+     fprintf(OUTPUT,"\\end{document}\n");
    }
  };
 
@@ -98,35 +100,35 @@ preamble:
 	|%empty;
 
 title:
-	YY_TITLE {puts("\\title{");} vars {fputs("}", stdout);};
+	YY_TITLE {fputs("\\title{",OUTPUT);} vars {fputs("}", OUTPUT);};
 author:
-	YY_AUTHOR {puts("\\author{");} vars {fputs("}", stdout);};
+	YY_AUTHOR {fputs("\\author{",OUTPUT);} vars {fputs("}", OUTPUT);};
 	
 story:
-	  assignment {fprintf(stderr,"Assignment found\n");} story
+	  assignment {fprintf(yyout,"Assignment found\n");} story
 	| choice story
 	| label story
-	| conditional {fprintf(stderr,"Conditional found\n");} story
+	| conditional {fprintf(yyout,"Conditional found\n");} story
 	| tagged-word story
 	| scenelist story
 	| link story
 	| page_break story
         | goto story
-  	| goto-scene   {fprintf(stderr,"Goto-scene found\n");}story
-  	| gosub         {fprintf(stderr,"gosub found\n");}story
-	| gosub-scene   {fprintf(stderr,"gosub-scene found\n");}story
-        | YY_ENDING {fprintf(stderr, "Ending found\n");} story
+  	| goto-scene   {fprintf(yyout,"Goto-scene found\n");}story
+  	| gosub         {fprintf(yyout,"gosub found\n");}story
+	| gosub-scene   {fprintf(yyout,"gosub-scene found\n");}story
+        | YY_ENDING {fprintf(yyout, "Ending found\n");} story
 	| %empty;
 
 scenelist:
   YY_SCENE_LIST blockofscenes {
     for (slist *start = $2; start; start = start->next){
       if (strcmp(start->s, STARTUP_NAME)) {
-	  printf("\\uppercase{\\chapter{%s}\\label{%s}}\n", start->s, start->s);
+	  fprintf(OUTPUT,"\\uppercase{\\chapter{%s}\\label{%s}}\n", start->s, start->s);
 	  import(start->s);
 	}
     }
-    puts("\\chapter{Main Matter}\n\n");
+    fprintf(OUTPUT,"\\chapter{Main Matter}\n");
   };
 
 blockofscenes:
@@ -145,16 +147,16 @@ vars:
 
 tagged-word:
 	      YY_STRING {puts($1);} 
-	      | YY_BEGINBOLD {puts("{\\bf");} tagged-string YY_ENDBOLD {fputs("}",stdout);}
-	      | YY_BEGINITALICS {puts("{\\it");} tagged-string YY_ENDITALICS {fputs("}",stdout);};
+	      | YY_BEGINBOLD {fputs("{\\bf",OUTPUT);} tagged-string YY_ENDBOLD {fputs("}",OUTPUT);}
+	      | YY_BEGINITALICS {fputs("{\\it",OUTPUT);} tagged-string YY_ENDITALICS {fputs("}",OUTPUT);};
              
 tagged-string:
 		tagged-word tagged-string
 		| %empty;
 	
 break:
-     YY_FINISH { puts("$\\diamondsuit$\n\n"); /* Needs work! */} 
-   | YY_RETURN { puts("\n{\\it Go back and continue reading}~$\\hookleftarrow$\n\n"); }
+     YY_FINISH { fprintf(OUTPUT,"$\\diamondsuit$\n\n"); /* Needs work! */} 
+   | YY_RETURN { fprintf(OUTPUT,"\n{\\it Go back and continue reading}~$\\hookleftarrow$\n\n"); }
    | %empty ;
 
 assignment:
@@ -162,14 +164,14 @@ assignment:
 	   | YY_CREATE YY_VAR arithmetic-expression;
 
 conditional:
-           YY_IF logical-expression { puts("xxx~?~$\\Rightarrow$"); } block else-if-continuation else-continuation;
+           YY_IF logical-expression { fprintf(OUTPUT,"xxx~?~$\\Rightarrow$"); } block else-if-continuation else-continuation;
 
 else-if-continuation:
-    YY_ELSEIF logical-expression { puts("xxx~??~$\\Rightarrow$"); } block else-if-continuation
+    YY_ELSEIF logical-expression { fprintf(OUTPUT,"xxx~??~$\\Rightarrow$"); } block else-if-continuation
   | %empty ;
 
 else-continuation:
-	     YY_ELSE  { puts("!~$\\Rightarrow$"); } block
+	     YY_ELSE  { fputs("!~$\\Rightarrow$",OUTPUT); } block
 	   | %empty;
 
 block:
@@ -219,8 +221,8 @@ relational-expression:
        | '(' relational-expression ')' ;
 
 choice: 
-	YY_CHOICE {puts("\\begin{description}[style=nextline]");}
-        block-cases {puts("\\end{description}");};
+	YY_CHOICE {fprintf(OUTPUT,"\\begin{description}[style=nextline]");}
+        block-cases {fprintf(OUTPUT,"\\end{description}");};
 
 block-cases:
         YY_PINDENT cases YY_NINDENT
@@ -231,28 +233,28 @@ cases:
 	| case;
 
 case:
-        YY_CASE {printf("\\item[%s]\n", $1);} block;
+        YY_CASE {fprintf(OUTPUT,"\\item[%s]\n", $1);} block;
 
 goto:
-        YY_GOTO YY_VAR  {printf("{$\\triangleleft$~{\\it Go to {\\bf %s} on page \\pageref{%s}.}~$\\triangleright$}\n\n", $2, $2);};
+        YY_GOTO YY_VAR  {fprintf(OUTPUT,"{$\\triangleleft$~{\\it Go to {\\bf %s} on page \\pageref{%s}.}~$\\triangleright$}\n\n", $2, $2);};
 
 gosub:
-        YY_GOSUB YY_VAR  {printf("\n\n{$\\triangleleft$~{\\it Go to {\\bf %s} on page \\pageref{%s}. Come back here when you are done.}~$\\triangleright$}\n\n", $2, $2);};
+        YY_GOSUB YY_VAR  {fprintf(OUTPUT,"\n\n{$\\triangleleft$~{\\it Go to {\\bf %s} on page \\pageref{%s}. Come back here when you are done.}~$\\triangleright$}\n\n", $2, $2);};
 
 goto-scene:
-	YY_GOTO_SCENE YY_VAR {printf("{$\\triangleleft$~{\\it Go to {\\bf %s} on page \\pageref{%s}.}~$\\triangleright$}\n\n", $2, $2);};
+	YY_GOTO_SCENE YY_VAR {fprintf(OUTPUT,"{$\\triangleleft$~{\\it Go to {\\bf %s} on page \\pageref{%s}.}~$\\triangleright$}\n\n", $2, $2);};
 
 gosub-scene:
 	YY_GOSUB_SCENE YY_VAR;
 
 label: 
-        YY_LABEL YY_VAR {printf("\\Ovalbox{$\\surd$~%s\\label{%s}}\n",$2,$2);};
+        YY_LABEL YY_VAR {fprintf(OUTPUT,"\\Ovalbox{$\\surd$~%s\\label{%s}}\n",$2,$2);};
 
 page_break:
-	YY_PAGE_BREAK {printf("\\cleardoublepage\n");};
+	YY_PAGE_BREAK {fprintf(OUTPUT,"\\cleardoublepage\n");};
 
 link:
-	YY_LINK YY_STRING {printf("\\url{%s}\n", $2);};
+	YY_LINK YY_STRING {fprintf(OUTPUT,"\\url{%s}\n", $2);};
 
 %%
 
