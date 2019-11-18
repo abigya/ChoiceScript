@@ -19,8 +19,7 @@ test: $(BIN)
 	(cd sample; ../$(BIN) <startup.txt) 
 
 latex: $(BIN)
-	(cd sample; ../$(BIN) < startup.txt > output.tex) 
-	pdflatex output.tex
+	(cd sample; ../$(BIN) < startup.txt ; pdflatex output.tex)
 
 clean:
 	rm -f $(OBJS) $(BIN) lex.yy.c csparser.c csparser.h *.tex *.aux *.log *.pdf *.out

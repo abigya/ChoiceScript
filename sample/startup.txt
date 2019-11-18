@@ -47,9 +47,9 @@ software distributed under the License is distributed on an
 "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
 either express or implied.
 
-*page_break
+*line_break
 
-Your majesty, your people are starving in the streets, and threaten revolution.
+Your majesty - your people are starving in the streets, and threaten revolution.
 Our enemies to the west are weak, but they threaten soon to invade.  What will you do?
 
 *choice

@@ -1,17 +1,15 @@
 All arithmetic expressions
 Conditionals
 Round
-image
-line_break
 input_text
 input_number
 rand
 stat_chart
 bug
 hide_reuse
-disable_reuse
-return 
+disable_reuse 
 Index
 Reference
 Capitalize, capitalize first string, quoted string
+write documentation - no $, _ ``'' are not supported
 

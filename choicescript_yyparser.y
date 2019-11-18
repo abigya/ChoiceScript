@@ -82,10 +82,14 @@ book: {
     fprintf(OUTPUT,"\\usepackage{hyperref}\n");
     fprintf(OUTPUT,"\\usepackage{fancybox}\n");
     fprintf(OUTPUT,"\\usepackage{enumitem}\n");
+    fprintf(OUTPUT,"\\usepackage{graphicx}\n");
     fprintf(OUTPUT,"\\begin{document}\n");
     fprintf(OUTPUT,"\\date{}\n");}
  } preamble {
-   fprintf(OUTPUT,"\\maketitle\n");
+	if (level==0){
+   		fprintf(OUTPUT,"\\maketitle\n");
+   		fprintf(OUTPUT,"\\label{__START__}");	
+	}
  } story {
    if (level == 0) { /* Are we in startup.txt? */
      fprintf(OUTPUT,"\\end{document}\n");
@@ -113,19 +117,20 @@ story:
 	| scenelist story
 	| link story
 	| page_break story
+	| line_break story
         | goto story
 	| image story
   	| goto-scene   {fprintf(yyout,"Goto-scene found\n");}story
   	| gosub         {fprintf(yyout,"gosub found\n");}story
 	| gosub-scene   {fprintf(yyout,"gosub-scene found\n");}story
-        | YY_ENDING {fprintf(yyout, "Ending found\n");} story
+        | ending {fprintf(yyout, "Ending found\n");} story
 	| %empty;
 
 scenelist:
   YY_SCENE_LIST blockofscenes {
     for (slist *start = $2; start; start = start->next){
       if (strcmp(start->s, STARTUP_NAME)) {
-	  fprintf(OUTPUT,"\\uppercase{\\chapter{%s}\\label{%s}}\n", start->s, start->s);
+	  fprintf(OUTPUT,"\\uppercase{\\chapter{%s}}\\label{%s}\n", start->s, start->s);
 	  import(start->s);
 	}
     }
@@ -143,13 +148,13 @@ scenes:
 	  $$->s = $1; $$->next = NULL; };
 
 vars:
-	YY_VAR{puts($1);} vars
-	| YY_VAR{puts($1);};
+	YY_VAR{fprintf(OUTPUT,"%s\n",$1);} vars
+	| YY_VAR{fprintf(OUTPUT,"%s\n",$1);};
 
 tagged-word:
-	      YY_STRING {puts($1);} 
-	      | YY_BEGINBOLD {fputs("{\\bf",OUTPUT);} tagged-string YY_ENDBOLD {fputs("}",OUTPUT);}
-	      | YY_BEGINITALICS {fputs("{\\it",OUTPUT);} tagged-string YY_ENDITALICS {fputs("}",OUTPUT);};
+	      YY_STRING {fprintf(OUTPUT,"%s\n",$1);} 
+	      | YY_BEGINBOLD {fputs("{\\bf ",OUTPUT);} tagged-string YY_ENDBOLD {fputs("}",OUTPUT);}
+	      | YY_BEGINITALICS {fputs("{\\it ",OUTPUT);} tagged-string YY_ENDITALICS {fputs("}",OUTPUT);};
              
 tagged-string:
 		tagged-word tagged-string
@@ -237,27 +242,34 @@ case:
         YY_CASE {fprintf(OUTPUT,"\\item[%s]\n", $1);} block;
 
 goto:
-        YY_GOTO YY_VAR  {fprintf(OUTPUT,"{$\\triangleleft$~{\\it Go to {\\bf %s} on page \\pageref{%s}.}~$\\triangleright$}\n\n", $2, $2);};
+        YY_GOTO YY_VAR  {fprintf(OUTPUT,"{$\\triangleleft$~{\\it Go to {\\bf %s} on page~\\pageref{%s}.}~$\\triangleright$}\n\n", $2, $2);};
 
 gosub:
-        YY_GOSUB YY_VAR  {fprintf(OUTPUT,"\n\n{$\\triangleleft$~{\\it Go to {\\bf %s} on page \\pageref{%s}. Come back here when you are done.}~$\\triangleright$}\n\n", $2, $2);};
+        YY_GOSUB YY_VAR  {fprintf(OUTPUT,"\n\n{$\\triangleleft$~{\\it Go to {\\bf %s} on page~\\pageref{%s}. Come back here when you are done.}~$\\triangleright$}\n\n", $2, $2);};
 
 goto-scene:
-	YY_GOTO_SCENE YY_VAR {fprintf(OUTPUT,"{$\\triangleleft$~{\\it Go to {\\bf %s} on page \\pageref{%s}.}~$\\triangleright$}\n\n", $2, $2);};
+	YY_GOTO_SCENE YY_VAR {fprintf(OUTPUT,"{$\\triangleleft$~{\\it Go to Chapter~\\uppercase{{\\bf %s}} on page~\\pageref{%s}.}~$\\triangleright$}\n\n", $2, $2);};
 
 gosub-scene:
-	YY_GOSUB_SCENE YY_VAR;
+	YY_GOSUB_SCENE YY_VAR {fprintf(OUTPUT,"\n\n{$\\triangleleft$~{\\it Go to Chapter~\\uppercase{{\\bf %s}} on page~\\pageref{%s}. Come back here when you are done.}~$\\triangleright$}\n\n", $2, $2);};
+
 
 label: 
         YY_LABEL YY_VAR {fprintf(OUTPUT,"\\Ovalbox{$\\surd$~%s\\label{%s}}\n",$2,$2);};
 
 page_break:
 	YY_PAGE_BREAK {fprintf(OUTPUT,"\\cleardoublepage\n");};
+line_break:
+	YY_LINE_BREAK {fprintf(OUTPUT,"\n\n");};
 
 link:
 	YY_LINK YY_STRING {fprintf(OUTPUT,"\\url{%s}\n", $2);};
 image:
-	YY_IMAGE YY_STRING {fprintf(OUTPUT,"\\includegraphics[width=\\linewidth]{%s}\n",$2);};
+	YY_IMAGE YY_STRING {fprintf(OUTPUT,"\\par\\includegraphics[width=0.75\\linewidth]{%s}\n\n",$2);};
+ending:
+	YY_ENDING {fprintf(OUTPUT,"\\begin{description}[style=nextline]");
+	 fprintf(OUTPUT,"\\item[Play again]\nGo to page~\\pageref{__START__} to play the game again.\n");
+         fprintf(OUTPUT,"\\end{description}");};
 
 %%
 

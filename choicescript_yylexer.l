@@ -108,6 +108,8 @@ CHAR    [^[:space:]\x1\x2[]
 "*link"		{fprintf(yyout,"link command");return YY_LINK;}
 "*title"	{fprintf(yyout,"title command");BEGIN(EXPR);return YY_TITLE;}
 "*author"	{fprintf(yyout,"author command");BEGIN(EXPR); return YY_AUTHOR;}
+[[:blank:]]+"-"[[:blank:]]+	{yylval.s = "---"; return YY_STRING; }
+
 
 #.+$            { fprintf(yyout,"%%CASE(%s)\n", strtok(yytext + 1, "\n\r"));
                   yylval.s = my_strdup( strtok(yytext + 1, "\n\r"));
@@ -124,10 +126,10 @@ CHAR    [^[:space:]\x1\x2[]
 
 <EXPR>{CHAR}+ { fprintf(yyout,"%%VAR(%s)\n", yytext);
                       yylval.s = my_strdup(yytext); 
-			fprintf(OUTPUT,"%s\n", yytext);return YY_VAR; }
+			/*fprintf(OUTPUT,"%s\n", yytext);*/return YY_VAR; }
 {CHAR}+ { fprintf(yyout,"%%STR(%s)\n", yytext);
                       yylval.s = my_strdup(yytext); 
-			fprintf(OUTPUT,"%s\n", yytext); return YY_STRING; }
+			/*fprintf(OUTPUT,"%s\n", yytext);*/ return YY_STRING; }
 	
 
  

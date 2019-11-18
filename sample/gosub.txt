@@ -6,7 +6,7 @@ The school bully is being mean to you.
   #Stand up to him.
     He's a lot tougher than you are; you hit him, but he barely even notices.
     
-    *gosub feelings
+    *gosub_scene ending
     
     He beats you up and takes your lunch money.
     *finish
