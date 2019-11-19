@@ -31,7 +31,8 @@
 %token YY_BEGINBOLD
 %token YY_BEGINITALICS
 %token YY_BUG
-%token YY_CHOICE			
+%token YY_CHOICE
+%token YY_FAKE_CHOICE			
 %token YY_CREATE
 %token YY_DISABLE_REUSE
 %token YY_ELSE
@@ -43,7 +44,8 @@
 %token YY_GOSUB
 %token YY_GOSUB_SCENE
 %token YY_GOTO	    
-%token YY_GOTO_SCENE			     
+%token YY_GOTO_SCENE	
+%token YY_GOTO_RANDOM_SCENE		     
 %token YY_HIDE_REUSE
 %token YY_IF
 %token YY_IMAGE
@@ -111,6 +113,7 @@ author:
 story:
 	  assignment {fprintf(yyout,"Assignment found\n");} story
 	| choice story
+	| fake_choice story
 	| label story
 	| conditional {fprintf(yyout,"Conditional found\n");} story
 	| tagged-word story
@@ -121,6 +124,7 @@ story:
         | goto story
 	| image story
   	| goto-scene   {fprintf(yyout,"Goto-scene found\n");}story
+	| goto-random-scene   {fprintf(yyout,"Goto-radom-scene found\n");}story
   	| gosub         {fprintf(yyout,"gosub found\n");}story
 	| gosub-scene   {fprintf(yyout,"gosub-scene found\n");}story
         | ending {fprintf(yyout, "Ending found\n");} story
@@ -230,6 +234,9 @@ choice:
 	YY_CHOICE {fprintf(OUTPUT,"\\begin{description}[style=nextline]");}
         block-cases {fprintf(OUTPUT,"\\end{description}");};
 
+fake-choice: 
+	YY_FAKE_CHOICE {fprintf(OUTPUT,"\\begin{description}[style=nextline]");}
+        block-cases {fprintf(OUTPUT,"\\end{description}");};
 block-cases:
         YY_PINDENT cases YY_NINDENT
       | YY_PINDENT block-cases YY_NINDENT;
@@ -253,6 +260,8 @@ goto-scene:
 gosub-scene:
 	YY_GOSUB_SCENE YY_VAR {fprintf(OUTPUT,"\n\n{$\\triangleleft$~{\\it Go to Chapter~\\uppercase{{\\bf %s}} on page~\\pageref{%s}. Come back here when you are done.}~$\\triangleright$}\n\n", $2, $2);};
 
+goto-random-scene:
+	YY_GOTO_RANDOM_SCENE YY_VAR {fprintf(OUTPUT,"{$\\triangleleft$~{\\it Go to Chapter~\\uppercase{{\\bf %s}} on page~\\pageref{%s}.}~$\\triangleright$}\n\n", $2, $2);};
 
 label: 
         YY_LABEL YY_VAR {fprintf(OUTPUT,"\\Ovalbox{$\\surd$~%s\\label{%s}}\n",$2,$2);};
@@ -269,6 +278,8 @@ image:
 ending:
 	YY_ENDING {fprintf(OUTPUT,"\\begin{description}[style=nextline]");
 	 fprintf(OUTPUT,"\\item[Play again]\nGo to page~\\pageref{__START__} to play the game again.\n");
+	 fprintf(OUTPUT,"\\item[Play more games like this]\n\\url{https://www.choiceofgames.com/category/our-games/}\n");
+	 fprintf(OUTPUT,"\\item[Share this game with friends]\nPlease support our work by sharing this game with friends! The more people play, the more resources we'll have to work on the next game.\n");
          fprintf(OUTPUT,"\\end{description}");};
 
 %%

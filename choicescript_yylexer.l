@@ -66,12 +66,14 @@ CHAR    [^[:space:]\x1\x2[]
 
 
 "*choice"	{fprintf(yyout,"CHOICE\n"); return YY_CHOICE; }
+"*fake_choice"	{fprintf(yyout,"FAKE_CHOICE\n"); return YY_FAKE_CHOICE; }
 "*create"	{fprintf(yyout,"CREATE\n"); BEGIN(EXPR); return YY_CREATE; }
 "*else"		{fprintf(yyout,"ELSE\n"); return YY_ELSE; }
 "*elseif"	{fprintf(yyout,"ELIF\n"); BEGIN(EXPR); return YY_ELSEIF; }	
 "*finish"	{fprintf(yyout,"FINISH\n");return YY_FINISH; }
 "*goto"		{fprintf(yyout,"GOTO\n");BEGIN(EXPR); return YY_GOTO; }
-"*goto_scene"	{fprintf(yyout,"GOTO_SCENE\n");BEGIN(EXPR); return 				YY_GOTO_SCENE; }
+"*goto_scene"	{fprintf(yyout,"GOTO_SCENE\n");BEGIN(EXPR); return YY_GOTO_SCENE; }
+"*goto_random_scene" {fprintf(yyout,"GOTO_RANDOM_SCENE\n");BEGIN(EXPR); return YY_GOTO_RANDOM_SCENE; }
 "*if"		{fprintf(yyout,"IF\n");BEGIN(EXPR); return YY_IF; }
 "*label"	{fprintf(yyout,"LABEL\n");BEGIN(EXPR); return YY_LABEL; }
 "*scene_list"	{fprintf(yyout,"SCENE_LIST\n");return YY_SCENE_LIST; }
@@ -87,7 +89,7 @@ CHAR    [^[:space:]\x1\x2[]
 						
 "*rand"		{fprintf(yyout,"rand command\n");return YY_RAND;}
 			
-"*stat_chart"	{fprintf(yyout,"stat_chart command");return 				YY_STAT_CHART;}		
+"*stat_chart"	{fprintf(yyout,"stat_chart command");return YY_STAT_CHART;}		
 			
 "*bug"		{fprintf(yyout,"bug command");return YY_BUG;}
 		
@@ -95,9 +97,9 @@ CHAR    [^[:space:]\x1\x2[]
 			
 "*hide_reuse"	{fprintf(yyout,"hide_reuse command");return YY_HIDE_REUSE;}
 			
-"*disable_reuse" {fprintf(yyout,"disable_reuse command");return 			YY_DISABLE_REUSE;}
+"*disable_reuse" {fprintf(yyout,"disable_reuse command");return YY_DISABLE_REUSE;}
 			
-"*gosub_scene"	{fprintf(yyout,"gosub_scene command");BEGIN(EXPR);return 				YY_GOSUB_SCENE;}
+"*gosub_scene"	{fprintf(yyout,"gosub_scene command");BEGIN(EXPR);return YY_GOSUB_SCENE;}
 			
 "*gosub"	{fprintf(yyout,"gosub command");BEGIN(EXPR);return YY_GOSUB;}
 			

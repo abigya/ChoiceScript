@@ -8,8 +8,25 @@ stat_chart
 bug
 hide_reuse
 disable_reuse 
+allow_reuse
 Index
 Reference
+achieve
+achievement
+Check achievements
+More games
+Delete
+Print
+gotoref
+setref
+temp
+Fake choice (almost same as choice but doesn't require user to make a choice)
+Goto random scene (need a hidden scenelist that should not be mentioned in startup.txt)
+Script
+Selectable if
+Share this game
+Show password
+Sound
 Capitalize, capitalize first string, quoted string
 write documentation - no $, _ ``'' are not supported
 
