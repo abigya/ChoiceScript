@@ -141,17 +141,24 @@ CHAR    [^[:space:]\x1\x2[]
 
 %%
 
-int main(void) {
+int main(int argc, char *argv[]) {
 	yyout = fopen("cs.log","w");
-	OUTPUT = fopen("output.tex","w");
-        if (!OUTPUT){
-		perror("output.tex");
-		exit(EXIT_FAILURE);
-	}
 	if (!yyout){
 		perror("cs.log");
 		exit(EXIT_FAILURE);
 	}
+	if (argc!=2){
+	  OUTPUT = fopen("startup.tex","w");
+	}else{
+		OUTPUT = fopen(argv[1],"w");
+		if (!OUTPUT){
+			perror(argv[1]);
+		}
+		OUTPUT = fopen("startup.tex","w");	
+	}
+	
+        
+	
 	fprintf(yyout, "ChoiceScript -> LaTeX\n");
 	yyparse();
 	return EXIT_SUCCESS;

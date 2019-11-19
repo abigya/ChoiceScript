@@ -113,7 +113,7 @@ author:
 story:
 	  assignment {fprintf(yyout,"Assignment found\n");} story
 	| choice story
-	| fake_choice story
+	| fake-choice story
 	| label story
 	| conditional {fprintf(yyout,"Conditional found\n");} story
 	| tagged-word story
