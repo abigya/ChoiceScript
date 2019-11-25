@@ -34,7 +34,7 @@
 *label action
 What will you do today?
 *choice
-  #Run for class president
+  *disable_reuse #Run for class president
     *if leadership > 15
       You [b]win[/b] the election.
       *finish

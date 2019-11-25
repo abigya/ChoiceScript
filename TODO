@@ -6,9 +6,9 @@ input_number
 rand
 stat_chart
 bug
-hide_reuse
-disable_reuse 
-allow_reuse
+hide_reuse *partially done*
+disable_reuse *partially done*
+allow_reuse *partially done*
 Index
 Reference
 achieve
@@ -20,7 +20,6 @@ Print
 gotoref
 setref
 temp
-Fake choice (almost same as choice but doesn't require user to make a choice)
 Goto random scene (need a hidden scenelist that should not be mentioned in startup.txt)
 Script
 Selectable if

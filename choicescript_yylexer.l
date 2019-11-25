@@ -32,7 +32,6 @@ CHAR    [^[:space:]\x1\x2[]
 
 "*comment".*$   /* comment */
 {EOL}           { BEGIN(INITIAL); /* Remove line breaks */ }
-[[:blank:]]     /* Remove single spaces */
 ^[[:blank:]]+   { adjustIndent(yytext); /* Indent */ }
 ^[[:^space:]]+  { BEGIN(INITIAL); yyless(0); adjustIndent(""); /* Outdent */ }
 <<EOF>>	        { /* End of file */
@@ -98,6 +97,7 @@ CHAR    [^[:space:]\x1\x2[]
 "*hide_reuse"	{fprintf(yyout,"hide_reuse command");return YY_HIDE_REUSE;}
 			
 "*disable_reuse" {fprintf(yyout,"disable_reuse command");return YY_DISABLE_REUSE;}
+"*allow_reuse" {fprintf(yyout,"allow_reuse command");return YY_ALLOW_REUSE;}
 			
 "*gosub_scene"	{fprintf(yyout,"gosub_scene command");BEGIN(EXPR);return YY_GOSUB_SCENE;}
 			
@@ -138,6 +138,7 @@ CHAR    [^[:space:]\x1\x2[]
 \$![{a-zA-Z}]+$	{ fprintf(yyout,"capitalize first letter of string");}
 \$!![{a-zA-Z}]+$ { fprintf(yyout,"capitalize the entire string");}
 \$[{a-zA-Z}]+$	{ fprintf(yyout,"quoted string");}
+[[:blank:]]     /* Remove single spaces */
 
 %%
 
@@ -147,25 +148,22 @@ int main(int argc, char *argv[]) {
 		perror("cs.log");
 		exit(EXIT_FAILURE);
 	}
-	if (argc!=2){
-	  OUTPUT = fopen("startup.tex","w");
-	}else{
-		OUTPUT = fopen(argv[1],"w");
-		if (!OUTPUT){
-			perror(argv[1]);
-		}
-		OUTPUT = fopen("startup.tex","w");	
-	}
+	char *outfilename = argc!=2 ? "startup.tex" : argv[1];
+	  OUTPUT = fopen(outfilename,"w");
+	  if (!OUTPUT){
+			perror(outfilename);
+			return EXIT_FAILURE;
+	  }
 	
         
 	
-	fprintf(yyout, "ChoiceScript -> LaTeX\n");
+	fprintf(stderr, "ChoiceScript -> LaTeX\n");
 	yyparse();
 	return EXIT_SUCCESS;
 }
 
 int yyerror(void) {
-  fprintf(yyout, "(infile):%d: syntax yyout\n", yylineno);
+  fprintf(stderr, "(infile):%d: syntax yyout\n", yylineno);
   exit(EXIT_FAILURE);      
 }
 

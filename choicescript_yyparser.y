@@ -35,6 +35,7 @@
 %token YY_FAKE_CHOICE			
 %token YY_CREATE
 %token YY_DISABLE_REUSE
+%token YY_ALLOW_REUSE
 %token YY_ELSE
 %token YY_ELSEIF
 %token YY_ENDBOLD
@@ -128,6 +129,8 @@ story:
   	| gosub         {fprintf(yyout,"gosub found\n");}story
 	| gosub-scene   {fprintf(yyout,"gosub-scene found\n");}story
         | ending {fprintf(yyout, "Ending found\n");} story
+	| YY_HIDE_REUSE {fprintf(yyout,"Hide Reuse found\n");} story
+	| YY_DISABLE_REUSE {fprintf(yyout,"Hide Disable found\n");} story
 	| %empty;
 
 scenelist:
@@ -246,7 +249,10 @@ cases:
 	| case;
 
 case:
-        YY_CASE {fprintf(OUTPUT,"\\item[%s]\n", $1);} block;
+        YY_CASE {fprintf(OUTPUT,"\\item[%s]\n", $1);} block
+	|YY_HIDE_REUSE  YY_CASE {fprintf(OUTPUT,"\\item[%s~\\Ovalbox{(~~)}]\n", $2);} block
+	|YY_DISABLE_REUSE  YY_CASE {fprintf(OUTPUT,"\\item[%s~\\Ovalbox{(~~)}]\n", $2);/*needs improvement*/} block
+	|YY_ALLOW_REUSE  YY_CASE {fprintf(OUTPUT,"\\item[%s]\n", $2);/*This needs work*/} block;
 
 goto:
         YY_GOTO YY_VAR  {fprintf(OUTPUT,"{$\\triangleleft$~{\\it Go to {\\bf %s} on page~\\pageref{%s}.}~$\\triangleright$}\n\n", $2, $2);};
