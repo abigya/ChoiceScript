@@ -10,6 +10,8 @@
 	static const char* STARTUP_NAME = "startup";
 	extern FILE *OUTPUT;
   	extern FILE *yyout;
+	static char *allscenes[10] = {NULL}; /*should there be a limit on the number of scenes ?*/
+        static int count = 0;
 %}
 
 %code requires {
@@ -125,7 +127,7 @@ story:
         | goto story
 	| image story
   	| goto-scene   {fprintf(yyout,"Goto-scene found\n");}story
-	| goto-random-scene   {fprintf(yyout,"Goto-radom-scene found\n");}story
+	| goto-random-scene   {fprintf(yyout,"Goto-random-scene found\n");}story
   	| gosub         {fprintf(yyout,"gosub found\n");}story
 	| gosub-scene   {fprintf(yyout,"gosub-scene found\n");}story
         | ending {fprintf(yyout, "Ending found\n");} story
@@ -138,6 +140,9 @@ scenelist:
     for (slist *start = $2; start; start = start->next){
       if (strcmp(start->s, STARTUP_NAME)) {
 	  fprintf(OUTPUT,"\\uppercase{\\chapter{%s}}\\label{%s}\n", start->s, start->s);
+	  allscenes[count] = start->s;
+          fprintf(yyout,"%s was imported\n",allscenes[count]);
+	  count ++;
 	  import(start->s);
 	}
     }
@@ -267,7 +272,21 @@ gosub-scene:
 	YY_GOSUB_SCENE YY_VAR {fprintf(OUTPUT,"\n\n{$\\triangleleft$~{\\it Go to Chapter~\\uppercase{{\\bf %s}} on page~\\pageref{%s}. Come back here when you are done.}~$\\triangleright$}\n\n", $2, $2);};
 
 goto-random-scene:
-	YY_GOTO_RANDOM_SCENE YY_VAR {fprintf(OUTPUT,"{$\\triangleleft$~{\\it Go to Chapter~\\uppercase{{\\bf %s}} on page~\\pageref{%s}.}~$\\triangleright$}\n\n", $2, $2);};
+        YY_GOTO_RANDOM_SCENE blockofscenes {
+	 for (slist *random = $2; random; random = random->next){
+		for (int j=0;j<count;j++){
+			if (!strcmp(random->s,allscenes[count])){
+				count++;
+				allscenes[count] = random->s;
+				 fprintf(yyout,"%s was imported\n",allscenes[count]);
+	  			import(random->s);
+			}	
+		}
+	 }
+		
+	};
+	 
+	
 
 label: 
         YY_LABEL YY_VAR {fprintf(OUTPUT,"\\Ovalbox{$\\surd$~%s\\label{%s}}\n",$2,$2);};

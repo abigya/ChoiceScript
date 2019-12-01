@@ -30,6 +30,7 @@
    *goto action
   #Strength
    *set strength +10
+   *goto_random_scene narrative
 
 *label action
 What will you do today?

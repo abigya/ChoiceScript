@@ -1,0 +1,397 @@
+*label Start1
+It is a dark and stormy night, the wind is pounding the speeding rain droplets into the windows of the shack. You wouldn't normally be here, had it not been necessary to your job -- well, your hobby. Alas, necessary it is.
+
+So, you're here. Stuck. Just what are you doing, though, you think as you hear the tied up child grunt. Oh, right -- ${him}.
+
+$!{he} is the one with the information, the details pertaining to a rather interesting online forum -- goes by the name of Choice of Games, you heard. Not quite sure why Boss sent you all the way out here to ask ${him} about it, but did always enjoy a little action -- the more dramatic the better.
+
+So, you turn on the investigation heat-lamp, take in your inventory of tools placed out in a chaotic methodology that only you would understand, and eye the kid you just secured to the chair.
+
+$!{his} dark-brown, unkempt hair is covering a large majority of ${his} face, and ${his} eyes, which ${he} is trying to mask as bored, are darting around, inquisitively. You suspect ${he}'s never been kidnapped before; ${he}'s due for a treat, then.
+
+With the silence replaced by the consistent buzz being emitted from the lamp, you prepare yourself for the night that is about to commence.
+
+*label Skip
+[i]How do you plan to take this investigation -- Good Cop or Bad Cop?[/i]
+*fake_choice
+	#Good Cop
+		*set GoodCop true
+		*goto Story_Start
+	#Bad Cop
+		The "Bad Cop" path contains obscurities. You cool with that?
+		*choice
+			#Yep.
+				Gotcha.
+				
+				---
+				
+				*set GoodCop false
+				*goto Story_Start
+			#Nope; I'll take it clean, please.
+				"Good Cop" you are, then.
+				
+				---
+				
+				*set GoodCop true
+				*goto Story_Start
+*label Story_Start
+*if (GoodCop)
+	"Hello," you say, uncertain of what to do. Might as well clear the air, you figure. "My name is Doc, I'm here to ask you a few questions. Let's try and take this nice, slow, and easy -- you need anything before we get started?"
+		
+	The only response the ${boy} gives you is a roll of ${his} eyes before ${he} slouches back over -- to the best of ${his} ability, anyway. By now, the ${boy} has mastered ${his} face and is looking rather nonchalant.
+	
+	"Look, kid. Let's try and take this easily. I know you might be angry that I've gone and tied you up, but look -- the way I figure, neither of us want to be here. Let's just sit down," you pull a chair out from the table and use it to sit by the kid, "have a nice, friendly conversation, and get to know each other." Gesturing to the table of tools, you promise, "and I'll only use those when I need to -- play your cards right, and you'll still have all of your fingers when you come out of this."
+			
+	As you smile, you watch the kid's eyes get just a bit wider before ${he} manages to regain ${his} composure.
+			
+*if not (GoodCop)
+			
+	"Look, kid," you say, purposefully making your voice come off as scratchy. You've put quite a bit of work into this facade, so it's pretty convincing -- to you, anyway. "This can go one of two ways: either you answer my questions and we go in peace," you say. With a dramatic pause, you pick the rusty knife off of the table and say, "or we can just cut this short."
+			
+	"Huh," ${he} says, eyeing your inventory. "Couldn't even bother to sharpen your tools?" By now, the ${boy} has mastered ${his} face and is looking rather nonchalant.
+			
+	"This makes it more fun," you chuckle before you stab the knife into the table. "Besides, a little rust doesn't act as a complete hindrance. You'd be surprised just how many things you can make compliant with a little brute-force."
+			
+Pulling a bottle of water out of your bag, you take a swig, gurgle, and spit near the kid's location, saying, "Now, then, let's get this over with."
+
+[i]What do you ask ${him}?[/i]
+*label TopicChoice
+*fake_choice
+	*selectable_if (Beginning = false) #Beginning
+		*set Beginning true
+		*goto Beginning
+	*if (Beginning) and not (Now) 
+		*selectable_if (Now = false) #Current Undertakings
+			*set Now true
+			*goto Now?
+	*if (Now)
+		*selectable_if (Future = false) #Future
+			*set Future true
+			*goto Future		
+	*if (Now)
+		*selectable_if ((GoodCop) and not (Friends)) #Friends
+			*set Friends true
+			*goto Friends
+	*if (Now)
+		*selectable_if (Welcoming = false) #Welcoming?
+			*set Welcoming true
+			*goto Welcoming
+	*if (Now)
+		*selectable_if (Revenue = false) #Revenue
+			*set Revenue true
+			*goto Revenue
+	*if (Now)
+		*selectable_if (Contributions = false) #Kid's Contributions
+			*set Contributions true
+			*goto Contributions
+	*if (Now)
+		*selectable_if (WrapUp = false) #Wrap the investigation up
+			*set WrapUp true
+			*goto WrapUp
+		
+*label Topics
+	*label Beginning
+	*goto Indent_B
+		*label Indent_B
+		"Now, kid, let's just start at the beginning," you say.
+		
+		"Beginning of [i]what[/i]," ${he} questions. "I have no idea what you even want. All I know is I'm stuck here, tied up, being threatened to pour my heart out about something I don't even know whether or not I know about!"
+		
+		*if (GoodCop)
+			"Hey, guess you finally decided to speak up. That's good! We're getting somewhere! Now, then, all I need you to tell me about is Choice of Games."
+			
+			As the ${boy} just shuts ${his} eyelids, shaking ${his} head, you hear ${him} mutter an obscurity. "Why would you be interested in that?" ${he} asks. "Furthermore, why would you choose me -- out of all people -- to talk about it? I don't even have..."
+			
+			You shush ${him}, saying, "Yeah, yeah, yeah. You don't need to do that. Just tell me what you know, and I'll let you go."
+			
+			"You keep saying that," the kid says, but notices you starting to get angry. "I suppose I might as well believe it. The beginning is where I start."
+			
+		*if not (GoodCop)
+			You slam the bottle of water onto the table, pull a chair out from under the table, set it up near the ${boy}, lean on it, and shout in ${his} face: "You know damn well what I want to know! CHOICE. OF. GAMES. Ring a bell?"
+			
+			You're surprised that the kid managed to not even flinch. "Calm down, old man. You want to get intimate? Buy me a drink first."
+			*fake_choice
+				#Give the kid a drink
+					Opening your bottle, you tell the kid to open ${his} mouth. $!{he} does, and you let a few droplets of water fall into it.
+					
+					Unfortunately, the kid's smart -- just a bit too quick witted, it would seem. Taking ${his} opportunity, ${he} follows your lead -- before you know it, you have a face-full of spit-water. "Payback," ${he} mutters.
+					
+					*page_break
+					
+					"Oh, cute," you growl. Getting up, you wipe your face with your hand, go back over to the table, and pick up that rusty knife you were demonstrating earlier.
+					
+					Prowling your way back over to the kid, you pull ${his} hair, and jerk the knife through a majority of the kid's bangs. As ${his} hair falls to the ground, you just say, "Next time, it'll be skin."
+								
+				#Smack the kid
+					"You do NOT want to offend me, mate," you say, taking your hand and palming ${his} cheek. "Now then, start talking."
+					
+			That got the kid to wince.
+			
+			"The beginning it is, then," ${he} says.
+			*line_break		
+			
+		"It is a time of turmoil and angst, a time of frigid, biting breezes, and a time of pitch-black night; it is the late evening, or perhaps early morning, of the 6th of October, 2015, and a young, naive ${boy} is putting ${his} all into 'completing' the first chapter of ${his} game," the ${boy} says. 
+		
+		"Why are you speaking third-person?" you ask.
+		
+		"It's for effect, mate. Dramatic, you know?"
+		*if (GoodCop)
+			
+			"Well, alright. At least you're talking. Just sounds a bit strange," you say.
+		*if not (GoodCop)	
+			
+			"You're a fucking mental, kid. Try getting some work done on that brain of yours after this, if I decide to let you go. Whatever, just continue."
+
+		"Okay," ${he} says. "I'll just continue, then. Where was I... oh, yes -- game making. You should note that the interest this child holds results from ${his} recent discovery of a fantastic service titled 'ChoiceScript,' and ${he} is as ready as ${he} is ever going to be to enter the world of 'Choice of Games.' 
+		
+		"Alright," you say. "What is ChoiceScript? Sounds kind of like a cult thing -- you in a cult, kid?"
+		
+		"I'm glad you asked," the kid states. "I was just getting ready to say --"
+		
+		"Cut the lip, kid," you interject.
+		
+		"Yes, sir! I was going to ask you if you remembered those multiple-choice gamebooks you once played -- the ones that led to different endings depending the choices you made. Well, ChoiceScript is that, along with a few trillion other uses."
+
+		"Perhaps that may not completely answer one's question," ${he} starts back up, "but the ${boy} is finished answering the petty, non-relevant inquiries being thrown in ${his} general direction.
+		*if not (GoodCop)
+		
+			"What the FUCK did you just say, kid?" you demand. "Every. Single. Thing. I. Ask. You. Is. Relevant. You answer my questions to the best of your ability, or I see no reason to keep you alive. So, do you want to retract your statement?"
+			
+			"Yes, sir! That was out of line. It won't happen again."
+			"
+			*goto Cont
+		*label Cont
+		Now, one can note that this juvenile's story that ${he} is writing is nowhere up to scruff with the rest of the community's work -- what, with ${his} constant absent-mindedness (causing ${him} to forget to recall variables for the names and genders of ${his} characters, resulting in females becoming males)," ${he} says, rolling ${his} eyes, "as well as ${his} tendency to recall text where it does not belong, one cannot truly expect the community to welcome this member with open arms. Surprisingly, though, that is exactly what they do. Under the name of 'Eleckar', this child receives feedback that allows ${him} to analyze ${his} shortcomings while still feeling like ${he} is welcome in the community. However, as observable in ${his} next chapter, ${he} is still oblivious to what ${he} needed to work on -- this causes little interest in ${his} next posting, and, in result, ${he} received little feedback. However, ${he} was able to read ${his} story over by himself and finally realize what ${he} can do better."
+		
+		The kid looks off, as though getting lost in ${his} thoughts.
+		*fake_choice
+			*if not (GoodCop)
+				#Slap ${him}
+					"Wake the FUCK up, kid! You aren't done here, dammit!"
+			#Rouse ${him}
+				"Come on, kid. If you can't even manage to keep yourself awake, then 
+				*if not (GoodCop)
+					I might as well just make sure you never wake up!" you shout.
+				*if (GoodCop)
+					we're never getting out of here. Just a few more minutes, and we're done," you say.
+		[i]Now, tell me about[/i]
+		*goto TopicChoice
+	*label Now?
+	*goto Indent_N
+		*label Indent_N
+		"Alright, so you released unfinished, barely polished work that was supbar to the writing needed to impress the community," you ridicule. "Any plans on how to fix that? What are you going to do in the future?"
+		
+		"Well," the child starts, clearly upset by your accusation, "!{he} does have a few ideas for the future. Since ${his} last release, ${he} is dabbling in more complex story-telling, focusing primarily on the branching of paths and coding functionality instead of actual creative writing. However, ${he} would stingily grumble that ${he} could do a lot better of a job if ${he} was not forced to meet the obligatory deadlines set by ${his} instructor; perhaps ${he} is a bit overwhelmed, but who can blame ${him} for holding such a thought?"
+
+		"Wait, wait, wait," you say. "You have an instructor? Who would teach you how to use this platform?"
+		
+		"You keep interrupting me, asking what I'm just about to explain."
+		*if (GoodCop)
+		
+			"Look, kid," you say, trying not to get too angry at the ${boy}. "Perhaps you should learn how to phrase your replies more intelligently. If I was just a bit crueler, you might very well have gotten your tongue split. Now, that's not what you want, is it?"
+			
+			"No, sir!" the ${boy} replies. "I will strive to keep a mutual respect!"
+			
+			"Good idea," you smile. "Now, then, what were you saying about your professor?"
+
+			"Oh, right. I was blaming ${him} for limiting my time," ${he} says.
+			
+		*if not (GoodCop)
+		
+			"And you just can't LEARN some damn respect, can you?" you shout in ${his} face before wrapping your knuckles against ${his} right temple. "Hello?" you mock. "Anyone there? This ${boy} seems to be lacking intelligence, and it's going to end up killing ${him}!"
+			
+			"Okay," the ${boy} whispers. "I'll do better, I promise."
+			
+			"Now, get back on track!" you demand.
+			
+			"Right. Where was I... oh yeah, my teacher, and ${his} stupid deadlines."
+		
+		"Although this line of thinking may be held, one can also assume that the child needs to learn how to meet deadlines; therefore, the instructor is actually teaching ${him} quite a bit in terms of real-world applications," the ${boy} contradicts. "While trying to master the coding portion of Choice of Games, the child is also noticing the value of having a reputation on the forums; after all, one is often more willing to read a work published by a renowned member of the community than a stranger with an unknown backstory. Unfortunately, due to ${his} lack of confidence, the ${boy} is only able to lurk on the forums; however, while doing this, ${he} can analyze what stories are well responded to and what makes them a success. Although a large percentage of the success one can receive in a community centered around creative writing lays in the quality of the piece, it is also a community composed of humans; therefore, a portion of said success does result from the format and tone one uses to regard ${his} work – more often than not, people are drawn to the mysterious and potentially dangerous than the straight-forward and relatively safe."
+		*if (GoodCop)
+			
+			"I suppose you could be much worse," the ${boy} says to you. "You could be one of those psychopaths that enjoy cutting the limbs off of children."
+			
+			"Oh, you're rather mistaken," you assure ${him}. "That is actually one of my favorite hobbies! Now, keep accusing me of things and I may have a couple new additions to place into my collection before the night is over!" you chuckle as the ${boy} gasps. "No worries, just continue your story, young one."
+			
+		*if not (GoodCop)
+			
+			The ${boy} steals a glance up at you as ${he} finishes ${his} sentence. You notice a rather smug smile on ${his} face, as if you were proving ${his} point. Before you can react, though, ${he} speaks up again.
+	
+		"That's pretty much it, on that front,"	the ${boy} says.
+		
+		"No, that's not about it!" you say. "This investigation is over when I say it's over. Now, tell me about
+		*goto TopicChoice
+	*label Future
+	*goto Indent_F
+		*label Indent_F
+		"Say, kid," you muse. "Just what are you planning on doing in the future? Do you plan on keeping up with this stuff?"
+		
+		"Well," the ${boy} says, "${his} main priority is completely rewriting 'A Strange Birthday' – ${his} failure of a game – so the four who actually enjoy the story aren’t disappointed and soil ${his} name.
+
+		*if (GoodCop)
+			"That's nice of you, kid. Finish what you start, then move on."
+			
+			"Yeah, exactly," ${he} agrees.
+		*if not (GoodCop)
+			"Wait, wait, wait," you grunt, "you haven't even finished your first fucking story?! How long has it been since you started?"
+			
+			"I started on October 6th of 2015, sir," the ${boy} sighs. "Writing without inspiration only leads to trouble, so it isn't really worth it."
+			
+			"If you want any respect, you start what you finished!" you yell. "I don't think you even deserve a scrap of notability, though, so do whatever the hell you want."
+		
+		"What will you do when you finish that story?" you ask.
+		
+		"Well, ${he} also intends to start ${his} next story – “A Robot’s Reflections on its Shortcomings” – which revolves around a robotic creation, endowed with free will, who is struggling to determine right from wrong." the ${boy} states.
+
+		"As much as I hate to admit it that actually sounds like a pretty good story" you say. "It might even get you some recognition. Say, are you planning on ever revealing your true identity, kid?"
+		
+		You notice that this question and compliment throws the kid off,
+		*if not (GoodCop)
+			which is good, considering that you're trying to play Bad Cop.
+		*if (GoodCop)
+			which is interesting, because you haven't seen ${him} take ${his} mask off before. ${he}'s quite a fascinating kid, really.
+		
+		"Um," the kid mutters, "it's actually pretty easy to trace 'Eleckar' to ${his} routes. However, you need to be somewhat tech-savvy to do that. If I can see the value of revealing my name, I will do so. Of course, in order for this to happen, I would need to have released a few games under the Choice of Games label and be earning a salary from doing so. Until then, there is simply no reason to reveal my face.”
+		
+		"Makes sense," you grunt. "Well, next I'll ask you about..."
+		*goto TopicChoice
+	*label Friends
+	*goto Indent_Fr
+		*label Indent_Fr
+		"So, kid," you say. "It sounds like you spend quite a bit of time on this site. Have you happened to make any friends?"
+		
+		"Why would I tell you if I had?" the kid replies. "I know how these go down. If I told you my friends, you would go out and kill them. I'm not an idiot, after all."
+		
+		"After everything I've done, you still take me for a monster -- which, you know, is [i]completely[/i] moronic! I could have been so much crueler to you, you know. Just tell me who your friends are, and I'll let you continue living."
+		
+		"Alright, alright, alright," the ${boy} says, exasperated. "My 'friends' aren't worth much, anyways. Besides, I don't even really have 'friends.' So, I'll just tell you about the people -- or person -- I admire.
+		
+		The author known as “Shawn_Patrick_Reed” could be considered to be the forum's best author; to the ${boy}, anyway."
+		
+		"Alright, I'll bite," you say. "What so special about this 'Shawn' fellow?"
+		
+		"Shawn_Patrick_Reed is an active, positive member contributing to the community concerned with the nine layers of Hell; Shawn personifies each major Sin as a character and sets them to interact with one another, tilting around the player's interactions. It is rather special, what Shawn can manage to do."
+		
+		"Huh," you grunt. "I guess it doesn't surprise me that you enjoy the concept of sin."
+		
+		Now, then, tell me about
+		*goto TopicChoice
+	*label Welcoming 
+	*goto Indent_W
+		*label Indent_W
+		"Just how welcoming is this forum?" you wonder out loud. "What's their take on new members?"
+		
+		"Well," the ${boy} starts, "although some posts have been completely ignored, the forum’s staff do apply effort into making sure that none of their new members arrive unwelcomed."
+
+		"Sounds lovely," you chuckle. "A nice cult, full of good thoughts and feelings."
+		
+		"Yeah, it is rather nice, even though it [i]isn't[/i] a cult! Anyways, it is only beneficial to acquire as many members as possible – why turn them away by acting like they aren’t there? As of now, eleven thousand members have joined the forum – over one thousand being active within the past seven days. Adding to that topic, Choice of Games is also fantastic for adhering to nearly everyone of any skill level, albeit they have to be willing to attempt to work towards learning the material – of which no real difficulty actually routes until one desires to create something new. From the basic creation of variables and Booleans to complex inventory storage and saving systems, there is often a member present that can supply the answer to any question, regardless of its difficulty."
+		
+		"[i]Booooring[/i]," you drone. "Just tell me about... "
+		*goto TopicChoice
+	*label Revenue
+	*goto Indent_R
+		*label Indent_R
+		"Just how are those eleven thousand members supported? How does Choice of Games make profit off of their service?" you ask. You always were concerned about monetary value; how else would you afford such [i]luxurious[/i] tools?
+			
+		"I'm not actually all that certain about their revenue source," the ${boy} admits, "but I do think it has something to do with selling their product. After all, as far as I can tell, they don't even let ads appear on their website. And, considering that bountiful eleven thousand members mentioned earlier, and the majority’s willingness to offer their monetary support, Choice of Games is not in need of advertising. 
+			
+		"Just how does this, work, though?" you inquire.
+
+		"Like I said, I'm not too certain. To my knowledge, the publisher, Choice of Games, provides their coding assets and capable community to every user looking to create their own branching story, with the likelihood that said user will use these tools to create their own success, even potentially creating a masterpiece worth a colossal amount of money, and earning X amount for their creation as well as $2.50 - $5.00 every time a new person purchases their story. Before the creator is credited this amount, though, Choice of Games collects 30% of every proceed as compensation. Using this logic, Choice of Games can earn a considerable amount of revenue for doing what they do – providing free, easy to use assets and an excellent community."
+			
+		"I suppose that makes sense," you ponder.
+		*if (GoodCop)
+			"Well, I guess that makes sense. The forum members are readily available to test and purchase the products of this publisher, Choice of Games. So supportive, it really is.
+		*if not (GoodCop)
+			"You're forum is full of swines," you mock, "wild boars -- ready to lick up everything that this publisher farts out!
+		Anyway, let's move on to something a bit more interesting."
+		*goto TopicChoice
+	*label Contributions
+	*goto Indent_C
+		*label Indent_C
+		"Say, kid, are you actually contributing to this forum? You seem like the reclusive type."
+		
+		"Well, ${he}'s not really," the kid admits. "I mean, ${he} is not as outgoing as ${he} could potentially be. However, early on ${he} did write entire full-length posts, supplying constructive criticism of the author’s grammar, mechanics, and coding style."
+		*if (GoodCop)
+			"That's nice of you," you say. "Using that English know-how to help your fellow comrades."
+			
+			"Yeah," the ${boy} says. "I figured I might as well do something."
+			
+			"Well, let's move on to..."
+		*if not (GoodCop)
+			"Sounds like you were a fucking menace," you chuckle. "You do know that there ain't no people that enjoy nitpicking, right?" You notice the kid sigh, and you say, "What, you planning on criticizing me too? Just remember who holds the knife before you do. Anyway, let's move on to..."
+		Not yet implemented.
+		*goto TopicChoice
+	*label WrapUp
+	*goto Indent_Wr
+		*label Indent_Wr
+		"Look, kid," you say.
+		*if (GoodCop)
+			*label GoodCop
+			"As much fun as it is to talk with you, it's getting pretty late -- or early, more like, and the rain has stopped. So, I'm just going to hook you up to this machine," you say, pulling out a device to wipe the kid's memory of the past few hours, "and I'll let you go."
+			
+			The ${boy}'s eyes open startledly, and ${he} quivers, "W-what are you planning on doing to me?"
+			
+			"Hush, child," you say, pulling out a rope and wrapping it around ${his} neck. "Just sleep."
+			
+			*goto Ending
+		*if not (GoodCop)
+			*label Test
+			"I could speak with you all night," you say. "If I wanted to burn my entire brain out of my head, that is. You are so fucking pathetic. No, I have what I need."
+			
+			"Does that mean I can go?" the ${boy} asks, with a hint of hope breaking through ${his} mask.
+			
+			"Let me think about it," you say, going to the table.
+			*fake_choice
+				#Let kid go
+					*label BadCop1
+					"You know, I'm probably going to regret this, but fuck it," you say, grabbing the knife and walking over to the kid. "Thanks for the conversation, mate. Have fun trying to get home." After saying this, you knock the kid out with the hilt of your knife and cut ${his} binds. $!{he}'ll probably find ${his} way home, and, if ${he} doesn't, it doesn't really bother you all that much.
+					*goto Ending
+				#Leave kid to die
+					*label BadCop2
+					"Nah, you can stay there," you say.
+					
+					"What?" the kid says. "You're going to just leave me here, let me starve to death?!"
+					
+					"What else would I do?" you chuckle. "I guess I could kill you now, but it's more fun to leave the cleanup guy with one hell of a job." As you walk to the door, you turn your head, witness the kid's tears running down ${his} face, and say, "Thanks for the info, I guess you were more useful than I initially gave you credit for."
+					*goto Ending
+				#Kill kid now
+					*label BadCop3
+					"You know," you say. "You were one hell of a headache tonight. I told you to cooperate, and you fought against me until the end. Well, I don't have time for kids that won't cooperate."
+					
+					As you go to the table to fetch that rusty knife of yours, you say, "But I don't really have time to do what I want with you. So, let's just cut--" at the word 'cut,' you run the blade across the kid's jugular, "-- this short." As the ${boy} 
+					spits out blood, you can't help but chuckle, "See you in Hell, kid."
+					*goto Ending
+		*label Ending
+		"I learned quite a bit tonight," you muse, after finishing the job. "I suppose it could have gone a bit better, less messy. But, alas, the mess is what makes it fun." As you open the door to the cabin, you take one final look back, and can't help but chuckle
+		*if (GoodCop)
+			at just how easily you tricked that kid into believing that you actually cared about #{him}.
+		*if not (GoodCop)
+			at the violence that occurred tonight.
+		
+		---
+		
+		[i]Read other endings?[/i]
+		*fake_choice
+			#Yes
+				Which ending would you like to read?
+				*choice
+					#GoodCop
+						*goto GoodCop
+					#BadCop 1 -- "Let Kid Go"
+						*goto BadCop1
+					#BadCop 2 -- "Leave Kid to Die"
+						*goto BadCop2
+					#BadCop 3 -- "Kill Kid Now"
+						*goto BadCop3
+					#Nevermind -- Just End the Game
+						Thank you for playing "Reflections: Narrative of Undertakings!"
+						
+						If you found any issues, please be sure to let the author know by emailing him at EleckarGames@gmail.com!
+						*finish
+			#No
+				Thank you for playing "Reflections: Narrative of Undertakings!"
+						
+				If you found any issues, please be sure to let the author know by emailing him at EleckarGames@gmail.com!
+				*finish
