@@ -2,7 +2,7 @@ ChoiceScript
 
 A C-based parser for ChoiceScript coded with Flex, Bison and LaTeX. 
 
-How to Run This Project
+Installation
 
 This project works perfectly on Linux, adjustments for Windows and Mac will be made in the future. 
 
