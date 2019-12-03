@@ -23,6 +23,7 @@ latex: $(BIN)
 
 clean:
 	rm -f $(OBJS) $(BIN) lex.yy.c csparser.c csparser.h *.tex *.aux *.log *.pdf *.out
-
+	(cd sample; rm -f *.tex *.aux *.log *.pdf *.out)
+ 
 
 
