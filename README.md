@@ -1,6 +1,6 @@
-<h1>ChoiceScript<h1>
+<h1>ChoiceScript</h1>
 <p>A C-based parser for ChoiceScript coded with Flex, Bison and LaTeX.<p>
-<h2>Installation<h2>
+<h2>Installation</h2>
 <p>This project works perfectly on Linux, adjustments for Windows and Mac will be made in the future.</p> 
    <p> 1. Open your Terminal and type the following commands as needed.
        <p>
