@@ -272,7 +272,8 @@ gosub-scene:
 	YY_GOSUB_SCENE YY_VAR {fprintf(OUTPUT,"\n\n{$\\triangleleft$~{\\it Go to Chapter~\\uppercase{{\\bf %s}} on page~\\pageref{%s}. Come back here when you are done.}~$\\triangleright$}\n\n", $2, $2);};
 
 goto-random-scene:
-        YY_GOTO_RANDOM_SCENE blockofscenes {
+	YY_GOTO_RANDOM_SCENE YY_VAR {fprintf(OUTPUT,"{$\\triangleleft$~{\\it Go to Chapter~\\uppercase{{\\bf %s}} on page~\\pageref{%s}.}~$\\triangleright$}\n\n", $2, $2);};
+        /*YY_GOTO_RANDOM_SCENE blockofscenes {
 	 for (slist *random = $2; random; random = random->next){
 		for (int j=0;j<count;j++){
 			if (!strcmp(random->s,allscenes[count])){
@@ -280,11 +281,12 @@ goto-random-scene:
 				allscenes[count] = random->s;
 				 fprintf(yyout,"%s was imported\n",allscenes[count]);
 	  			import(random->s);
+				fprintf(OUTPUT,"{$\\triangleleft$~{\\it Go to Chapter~\\uppercase{{\\bf %s}} on page~\\pageref{%s}.}~$\\triangleright$}\n\n", random->s, random->s);
 			}	
 		}
 	 }
 		
-	};
+	};*/
 	 
 	
 
