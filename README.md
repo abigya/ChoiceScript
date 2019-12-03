@@ -2,19 +2,19 @@
 <p>A C-based parser for ChoiceScript coded with Flex, Bison and LaTeX.<p>
 <h2>Installation</h2>
 <p>This project works perfectly on Linux, adjustments for Windows and Mac will be made in the future.</p> 
-   <p> 1. Open your Terminal and type the following commands as needed.
+   <p> 1. Open your <b>Terminal</b> and type the following commands as needed.
        <p>
-       <ul>git: sudo apt install git</ul>
-        <ul>gcc & make: sudo apt install build-essential</ul>
-        <ul>Flex: sudo apt-get install flex</ul>
-        <ul>Bison: sudo apt-get install bison</ul>
-           <ul>LaTeX : sudo apt-get install texlive </ul></p>
+<ul><b>git:</b> sudo apt install git</ul>
+        <ul><b>gcc & make:</b> sudo apt install build-essential</ul>
+        <ul><b>Flex:</b> sudo apt-get install flex</ul>
+        <ul><b>Bison:</b> sudo apt-get install bison</ul>
+           <ul><b>LaTeX:</b> sudo apt-get install texlive </ul></p>
     </p>
 <p>2. In your desired directory run:
     <ul>git clone “https://github.com/abigya/ChoiceScript.git”</ul>
     <ul>This will create a copy of this project on your computer.</ul></p>
  <h2>Build</h2>
-<ul>1.	Open Terminal and cd to the ChoiceScript folder. </ul>
+<ul>1.	Open<b>Terminal</b> and cd to the ChoiceScript folder. </ul>
 <ul>2.	Type make. This will build the project with the object files. 
     <br>
     <img src = "https://github.com/abigya/ChoiceScript/blob/master/make.PNG"></img>
