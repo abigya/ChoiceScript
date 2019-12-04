@@ -21,6 +21,9 @@
 %code requires {
   extern int level;
   typedef struct slist {
+  /**
+   *This is a linked list to iterate through the scenes in a scenelist. 
+  */
     char *s;
     struct slist *next; } slist;
 }
@@ -31,7 +34,9 @@
 	char *s;
 	slist *slist;
 }
-
+/**
+* Tokens received from the lexer. 
+*/
 %token YY_AND
 %token YY_AUTHOR
 %token YY_BEGINBOLD
