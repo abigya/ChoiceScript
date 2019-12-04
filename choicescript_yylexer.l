@@ -1,7 +1,7 @@
-@file choicescript_yylexer.l
-@author Abigya Devkota and Dmitry Zinoviev
-@date December 3, 2019
-@brief Lex file with tokens 
+/** @file choicescript_yylexer.l */
+/** @author Abigya Devkota and Dmitry Zinoviev*/
+/** @date December 3, 2019 */
+/** @brief Lex file with tokens */
 %{
 #include "csparser.h"
 #ifdef __APPLE__
@@ -169,7 +169,7 @@ int main(int argc, char *argv[]) {
         
 	
 	fprintf(stderr, "ChoiceScript -> LaTeX\n");
-	@code yyparse(); @endcode
+	yyparse(); 
 	return EXIT_SUCCESS;
 }
 /**
@@ -231,7 +231,7 @@ void import(char* file) {
  /**
  *Creates a buffer associated with the given file and large enough to hold YY_BUF_SIZE characters
  */
-@code yypush_buffer_state(yy_create_buffer(f, YY_BUF_SIZE)); @endcode
+ yypush_buffer_state(yy_create_buffer(f, YY_BUF_SIZE));
  free(fullfile);
  
  level = 1;

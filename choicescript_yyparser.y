@@ -1,7 +1,7 @@
-@file choicescript_yyparser.y
-@author Abigya Devkota and Dmitry Zinoviev
-@date December 3, 2019
-@brief Yacc file with grammar rules
+/**@file choicescript_yyparser.y */
+/**@author Abigya Devkota and Dmitry Zinoviev*/
+/**@date December 3, 2019*/
+/**@brief Yacc file with grammar rules*/
 %{
 	#include <stdlib.h>
 	#include <stdio.h>
