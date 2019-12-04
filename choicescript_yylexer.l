@@ -1,3 +1,7 @@
+@file choicescript_yylexer.l
+@author Abigya Devkota and Dmitry Zinoviev
+@date December 3, 2019
+@brief Lex file with tokens 
 %{
 #include "csparser.h"
 #ifdef __APPLE__
@@ -20,7 +24,7 @@
 %option yylineno
 
 EOL     [[:space:]]{-}[[:blank:]]
-D	[[:digit:]]
+D	      [[:digit:]]
 INT     [+-]?{D}+
 FLT     [+-]?(({D}+"."{D}*)|("."{D}+))
 CHAR    [^[:space:]\x1\x2[]
@@ -44,7 +48,7 @@ CHAR    [^[:space:]\x1\x2[]
   }
  };
 
-\x1             { fprintf(yyout,"{\n"); brace_balance++; return YY_PINDENT;}
+\x1   { fprintf(yyout,"{\n"); brace_balance++; return YY_PINDENT;}
 \x2		{ fprintf(yyout,"}\n"); brace_balance--; return YY_NINDENT;}
 
 <EXPR>{INT}   	{ yylval.i = atoi(yytext); return YY_INT;}
@@ -141,7 +145,14 @@ CHAR    [^[:space:]\x1\x2[]
 [[:blank:]]     /* Remove single spaces */
 
 %%
-
+/**
+*This is the main function of the parser. 
+*It allows the user to enter their own output filename. 
+*If no filename is given, the output goes to startup.tex.
+*The parser terminates if any errors are found. 
+*yyparse() is called if there are no errors. 
+*All diagnostic messages are sent to cs.log through yyout. 
+*/
 int main(int argc, char *argv[]) {
 	yyout = fopen("cs.log","w");
 	if (!yyout){
@@ -158,15 +169,22 @@ int main(int argc, char *argv[]) {
         
 	
 	fprintf(stderr, "ChoiceScript -> LaTeX\n");
-	yyparse();
+	@code yyparse(); @endcode
 	return EXIT_SUCCESS;
 }
-
+/**
+*If there is an error in any given opened file, this function displays the line number where it exists and terminates the parser. 
+*/
 int yyerror(void) {
   fprintf(stderr, "(infile):%d: syntax yyout\n", yylineno);
   exit(EXIT_FAILURE);      
 }
-
+/**
+*This function records the change in indentation in the ChoiceScript text files.
+*\x1 marks positive indentation.
+*\x2 marks negative indentation.
+*For the parser to fully read a file, positive indents must match negative indents. 
+*/
 void adjustIndent(char* text){
   static int depth = 0;
   int new_depth = strlen(text);
@@ -174,13 +192,19 @@ void adjustIndent(char* text){
   for (int i = 0; i < depth - new_depth; i++) unput('\x2');
   depth = new_depth;
 }
-
+/**
+*This is a safe function built on strdup. 
+*It prevents strdup from processing a null pointer. 
+*/
 char *my_strdup(const char *ptr){
    void* check = strdup(ptr);
    if (!check) abort();
    return check;
 }
-
+/**
+*This is a safe function built on malloc. 
+*It prevents malloc from allocating memory for a null pointer.
+*/
 void *safe_malloc(size_t size){
     void* result = malloc(size);
     if(NULL==result){
@@ -188,7 +212,10 @@ void *safe_malloc(size_t size){
     }
     return result;
 }
-
+/**
+*This function opens and reads a given text file after adding .txt to the parameter. 
+*It is used to read the list of scenes for a given story. 
+*/
 void import(char* file) {
  char* fullfile = safe_malloc(strlen(file) + strlen(".txt") + 1);
  strcpy(fullfile, file);
@@ -201,7 +228,10 @@ void import(char* file) {
  }
  fprintf(yyout, "Opened (%s)\n", fullfile);
  yylineno = 1;
- yypush_buffer_state(yy_create_buffer(f, YY_BUF_SIZE)); 
+ /**
+ *Creates a buffer associated with the given file and large enough to hold YY_BUF_SIZE characters
+ */
+@code yypush_buffer_state(yy_create_buffer(f, YY_BUF_SIZE)); @endcode
  free(fullfile);
  
  level = 1;
