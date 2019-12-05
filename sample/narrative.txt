@@ -35,23 +35,22 @@ With the silence replaced by the consistent buzz being emitted from the lamp, yo
 				*set GoodCop true
 				*goto Story_Start
 *label Story_Start
-*if (GoodCop)
-	"Hello," you say, uncertain of what to do. Might as well clear the air, you figure. "My name is Doc, I'm here to ask you a few questions. Let's try and take this nice, slow, and easy -- you need anything before we get started?"
-		
+*if (GoodCop = 0)
+	"Hello," you say, uncertain of what to do. Might as well clear the air, you figure. "My name is Doc, I'm here to ask you a few questions. Let's try and take this nice, slow, and easy -- you need anything before we get started?"	
 	The only response the ${boy} gives you is a roll of ${his} eyes before ${he} slouches back over -- to the best of ${his} ability, anyway. By now, the ${boy} has mastered ${his} face and is looking rather nonchalant.
 	
 	"Look, kid. Let's try and take this easily. I know you might be angry that I've gone and tied you up, but look -- the way I figure, neither of us want to be here. Let's just sit down," you pull a chair out from the table and use it to sit by the kid, "have a nice, friendly conversation, and get to know each other." Gesturing to the table of tools, you promise, "and I'll only use those when I need to -- play your cards right, and you'll still have all of your fingers when you come out of this."
-			
+	
 	As you smile, you watch the kid's eyes get just a bit wider before ${he} manages to regain ${his} composure.
-			
+
 *if not (GoodCop)
-			
+	
 	"Look, kid," you say, purposefully making your voice come off as scratchy. You've put quite a bit of work into this facade, so it's pretty convincing -- to you, anyway. "This can go one of two ways: either you answer my questions and we go in peace," you say. With a dramatic pause, you pick the rusty knife off of the table and say, "or we can just cut this short."
-			
+	
 	"Huh," ${he} says, eyeing your inventory. "Couldn't even bother to sharpen your tools?" By now, the ${boy} has mastered ${his} face and is looking rather nonchalant.
-			
+	
 	"This makes it more fun," you chuckle before you stab the knife into the table. "Besides, a little rust doesn't act as a complete hindrance. You'd be surprised just how many things you can make compliant with a little brute-force."
-			
+	
 Pulling a bottle of water out of your bag, you take a swig, gurgle, and spit near the kid's location, saying, "Now, then, let's get this over with."
 
 [i]What do you ask ${him}?[/i]

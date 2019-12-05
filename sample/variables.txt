@@ -23,6 +23,8 @@
 
 
 [i]What do [b]you[/b] prefer?[/i]
+*goto_random_scene 
+ narrative
 *choice
   #Leadership
    *set leadership +10
@@ -30,7 +32,7 @@
    *goto action
   #Strength
    *set strength +10
-   *goto_random_scene narrative
+
 
 *label action
 What will you do today?

@@ -2,23 +2,21 @@
 /**@author Abigya Devkota and Dmitry Zinoviev*/
 /**@date December 3, 2019*/
 /**@brief Yacc file with grammar rules*/
-%{
-	#include <stdlib.h>
-	#include <stdio.h>
-	#include <string.h>
-	void yyerror(char*);
-	void import(char*);
-        void *safe_malloc(size_t size);
-	int yylex();
-	int level = 0; /* Are we at the top level? */
-	static const char* STARTUP_NAME = "startup";
-	extern FILE *OUTPUT;
-  	extern FILE *yyout;
-	static char *allscenes[10] = {NULL}; /*should there be a limit on the number of scenes ?*/
-        static int count = 0;
-%}
-
 %code requires {
+   
+  #include <stdlib.h>
+  #include <stdio.h>
+  #include <string.h>
+  #ifdef __APPLE__
+   extern int yylex(void);
+   extern int yyparse(void);
+  #endif
+  
+  extern FILE *OUTPUT;
+  extern FILE *yyout;
+  void adjustIndent(char*); 
+  void *safe_malloc(size_t size);
+  char *my_strdup(const char *ptr);
   extern int level;
   typedef struct slist {
   /**
@@ -27,6 +25,20 @@
     char *s;
     struct slist *next; } slist;
 }
+
+%{
+	#include "csparser.h"
+	void yyerror(char*);
+	void import(char*);
+	int yylex();
+	int level = 0; /* Are we at the top level? */
+	static const char* STARTUP_NAME = "startup";
+	#define MAX_SCENES 1000
+	static char *allscenes[MAX_SCENES] = {NULL}; /*should there be a limit on the number of scenes ?*/
+        static int count = 0;
+	static int imported_count = 0;
+%}
+
 
 %union{
 	int i;
@@ -38,6 +50,7 @@
 * Tokens received from the lexer. 
 */
 %token YY_AND
+%token YY_NOT
 %token YY_AUTHOR
 %token YY_BEGINBOLD
 %token YY_BEGINITALICS
@@ -147,12 +160,20 @@ story:
 scenelist:
   YY_SCENE_LIST blockofscenes {
     for (slist *start = $2; start; start = start->next){
-      if (strcmp(start->s, STARTUP_NAME)) {
-	  fprintf(OUTPUT,"\\uppercase{\\chapter{%s}}\\label{%s}\n", start->s, start->s);
-	  allscenes[count] = start->s;
-          fprintf(yyout,"%s was imported\n",allscenes[count]);
-	  count ++;
+	/*check if file was imported*/      
+	if (strcmp(start->s, STARTUP_NAME)) {
+	 
+	  if (count<MAX_SCENES){
+		allscenes[count++] = my_strdup(start->s);
+		imported_count++;
+	  } 
+	 
+          fprintf(yyout,"%s was imported\n",start->s);
 	  import(start->s);
+	  for (int k=imported_count;k<count;k++){
+		import(allscenes[k]);
+		imported_count++;
+	  }
 	}
     }
     fprintf(OUTPUT,"\\chapter{Main Matter}\n");
@@ -241,10 +262,12 @@ arithmetic-remainder:
 
 logical-expression:
 	  relational-expression logical-operator relational-expression
+	| YY_NOT relational-expression
 	| relational-expression;
 
 relational-expression:
          arithmetic-expression relational-operator arithmetic-expression
+       | arithmetic-expression
        | '(' relational-expression ')' ;
 
 choice: 
@@ -281,21 +304,25 @@ gosub-scene:
 	YY_GOSUB_SCENE YY_VAR {fprintf(OUTPUT,"\n\n{$\\triangleleft$~{\\it Go to Chapter~\\uppercase{{\\bf %s}} on page~\\pageref{%s}. Come back here when you are done.}~$\\triangleright$}\n\n", $2, $2);};
 
 goto-random-scene:
-	YY_GOTO_RANDOM_SCENE YY_VAR {fprintf(OUTPUT,"{$\\triangleleft$~{\\it Go to Chapter~\\uppercase{{\\bf %s}} on page~\\pageref{%s}.}~$\\triangleright$}\n\n", $2, $2);};
-        /*YY_GOTO_RANDOM_SCENE blockofscenes {
+	/*YY_GOTO_RANDOM_SCENE YY_VAR {fprintf(OUTPUT,"{$\\triangleleft$~{\\it Go to Chapter~\\uppercase{{\\bf %s}} on page~\\pageref{%s}.}~$\\triangleright$}\n\n", $2, $2);};*/
+        YY_GOTO_RANDOM_SCENE blockofscenes {
 	 for (slist *random = $2; random; random = random->next){
-		for (int j=0;j<count;j++){
-			if (!strcmp(random->s,allscenes[count])){
-				count++;
-				allscenes[count] = random->s;
-				 fprintf(yyout,"%s was imported\n",allscenes[count]);
-	  			import(random->s);
-				fprintf(OUTPUT,"{$\\triangleleft$~{\\it Go to Chapter~\\uppercase{{\\bf %s}} on page~\\pageref{%s}.}~$\\triangleright$}\n\n", random->s, random->s);
-			}	
-		}
-	 }
+                int j;
+		for (j=0;j<count;j++)
+			if (!strcmp(random->s,allscenes[j])) break;	
 		
-	};*/
+		if (j==count){
+		 if (count<MAX_SCENES)allscenes[count++] = my_strdup(random->s);
+		    
+                }
+	    fprintf(OUTPUT,"{$\\triangleleft$~{\\it Go to Chapter~\\uppercase{{\\bf %s}} on page~\\pageref{%s}.}~$\\triangleright$}\n\n", random->s, random->s);
+	 }
+		if (level==0){ 
+			for (;imported_count<count;imported_count++){
+				import(allscenes[imported_count]);
+	  		}		
+		}
+	};
 	 
 	
 

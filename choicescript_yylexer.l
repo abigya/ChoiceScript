@@ -4,13 +4,8 @@
 /** @brief Lex file with tokens */
 %{
 #include "csparser.h"
-#ifdef __APPLE__
-  extern int yylex(void);
-  extern int yyparse(void);
-#endif
-  void adjustIndent(char*); 
-  void *safe_malloc(size_t size);
-  char *my_strdup(const char *ptr);
+
+  
   int brace_balance = 0; /**< Maintain the balance of braces */
   FILE *OUTPUT; /**< File handle for ouput*/
   FILE *yyout; /**< File handle for diagnostic print outs*/
@@ -57,6 +52,7 @@ CHAR    [^[:space:]\x1\x2[]
 <EXPR>{FLT}   	{ yylval.d = atoi(yytext); 
 					return YY_FLOAT; } /**< @return Token to parser when a floating point number is found*/
 <EXPR>"and"	{ return YY_AND;} /**< @return Token to parser when and operator is found*/
+<EXPR>"not"	{ return YY_NOT;} /**< @return Token to parser when not operator is found*/
 <EXPR>"+" 	{ return yytext[0];} /**<Addition*/
 <EXPR>"-"	{ return yytext[0];} /**<Subtraction*/
 <EXPR>"/"	{ return yytext[0];}/**<Division*/
@@ -259,32 +255,5 @@ void *safe_malloc(size_t size){
     }
     return result;
 }
-/**
-*This function opens and reads a given text file after adding .txt to the parameter. 
-*It is used to read the list of scenes for a given story. 
-* @param file A character pointer, preferably a filename. 
-* @return No return value. 
-*/
-void import(char* file) {
- char* fullfile = safe_malloc(strlen(file) + strlen(".txt") + 1);
- strcpy(fullfile, file);
- strcat(fullfile, ".txt");
- FILE *f = fopen(fullfile, "r");
- if (!f) {
-   perror(fullfile);
-   free(fullfile);
-   return;
- }
- fprintf(yyout, "Opened (%s)\n", fullfile);
- yylineno = 1;
- /**
- *Creates a buffer associated with the given file and large enough to hold YY_BUF_SIZE characters
- */
- yypush_buffer_state(yy_create_buffer(f, YY_BUF_SIZE));
- free(fullfile);
- 
- level = 1;
- yyparse(); /**< Parse the includes recursively */
- level = 0;
-}
+
 
