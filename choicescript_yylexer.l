@@ -30,6 +30,7 @@ CHAR    [^[:space:]\x1\x2[]
 
 "*comment".*$   /**< comment */
 {EOL}           { BEGIN(INITIAL); /**< Remove line breaks */ }
+^[[:space:]]*$  /* Skip blank lines */
 ^[[:blank:]]+   { adjustIndent(yytext); /* Indent */ }
 ^[[:^space:]]+  { BEGIN(INITIAL); yyless(0); adjustIndent(""); /**< Outdent */ }
 <<EOF>>	        { /**< End of file */

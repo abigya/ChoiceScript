@@ -23,8 +23,8 @@
 
 
 [i]What do [b]you[/b] prefer?[/i]
-*goto_random_scene 
- narrative
+*comment *goto_random_scene 
+*comment  narrative
 *choice
   #Leadership
    *set leadership +10
@@ -45,6 +45,7 @@ What will you do today?
     *finish
   #Lift weights
     *if strength > 15
+    	  
       You lift the 33 weights.
       *finish
     You drop the weights and hurt yourself badly.  You never recover.
