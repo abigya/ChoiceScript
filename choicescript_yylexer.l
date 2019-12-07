@@ -4,6 +4,7 @@
 /** @brief Lex file with tokens */
 %{
 #include "csparser.h"
+ 
 
   
   int brace_balance = 0; /**< Maintain the balance of braces */
@@ -16,6 +17,7 @@
 %option noyywrap
 %option noinput
 %option yylineno
+%option nounput
 
 EOL     [[:space:]]{-}[[:blank:]]
 D	 [[:digit:]]
@@ -181,80 +183,6 @@ CHAR    [^[:space:]\x1\x2[]
 [[:blank:]]     /**< Remove single spaces */
 
 %%
-/**
-*This is the main function of the parser. 
-*It allows the user to enter their own output filename. 
-*If no filename is given, the output goes to startup.tex.
-*The parser terminates if any errors are found. 
-*yyparse() is called if there are no errors. 
-*All diagnostic messages are sent to cs.log through yyout. 
-*/
-int main(int argc, char *argv[]) {
-	yyout = fopen("cs.log","w");
-	if (!yyout){
-		perror("cs.log");
-		exit(EXIT_FAILURE);
-	}
-	char *outfilename = argc!=2 ? "startup.tex" : argv[1];
-	  OUTPUT = fopen(outfilename,"w");
-	  if (!OUTPUT){
-			perror(outfilename);
-			return EXIT_FAILURE;
-	  }
-	
-        
-	
-	fprintf(stderr, "ChoiceScript -> LaTeX\n");
-	yyparse(); 
-	return EXIT_SUCCESS;
-}
-/**
-*If there is an error in any given opened file, this function displays the line number where it exists and terminates the parser. 
-* @param None
-* @return No return value. 
-*/
-int yyerror(void) {
-  fprintf(stderr, "(infile):%d: syntax yyout\n", yylineno);
-  exit(EXIT_FAILURE);      
-}
-/**
-*This function records the change in indentation in the ChoiceScript text files.
-*\x1 marks positive indentation.
-*\x2 marks negative indentation.
-*For the parser to fully read a file, positive indents must match negative indents. 
-*@param text A character pointer. 
-*@return No return value.
-*/
-void adjustIndent(char* text){
-  static int depth = 0;
-  int new_depth = strlen(text);
-  for (int i = 0; i < new_depth - depth; i++) unput('\x1');
-  for (int i = 0; i < depth - new_depth; i++) unput('\x2');
-  depth = new_depth;
-}
-/**
-*This is a safe function built on strdup. 
-*It prevents strdup from processing a null pointer. 
-* @param ptr A character pointer.
-* @return Returns a copy of the parameter. 
-*/
-char *my_strdup(const char *ptr){
-   void* check = strdup(ptr);
-   if (!check) abort();
-   return check;
-}
-/**
-*This is a safe function built on malloc. 
-*It prevents malloc from allocating memory for a null pointer.
-* @param size Size of memory to be allocated.
-* @return Allocated memory for the given size. 
-*/
-void *safe_malloc(size_t size){
-    void* result = malloc(size);
-    if(NULL==result){
-	abort();
-    }
-    return result;
-}
+
 
 
