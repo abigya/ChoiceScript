@@ -1,7 +1,9 @@
-/** @file choicescript_yylexer.l */
-/** @author Abigya Devkota and Dmitry Zinoviev*/
-/** @date December 3, 2019 */
-/** @brief Lex file with tokens */
+/** 
+*@file choicescript_yylexer.l 
+*@author Abigya Devkota and Dmitry Zinoviev
+*@date December 3, 2019 
+*@brief Lex file with tokens 
+*/
 %{
 #include "csparser.h"
  
@@ -17,7 +19,6 @@
 %option noyywrap
 %option noinput
 %option yylineno
-%option nounput
 
 EOL     [[:space:]]{-}[[:blank:]]
 D	 [[:digit:]]
@@ -184,5 +185,21 @@ CHAR    [^[:space:]\x1\x2[]
 
 %%
 
+
+/**
+*This function records the change in indentation in the ChoiceScript text files.
+*\x1 marks positive indentation.
+*\x2 marks negative indentation.
+*For the parser to fully read a file, positive indents must match negative indents. 
+*@param text A character pointer. 
+*@return No return value.
+*/
+void adjustIndent(char* text){
+  static int depth = 0;
+  int new_depth = strlen(text);
+  for (int i = 0; i < new_depth - depth; i++) unput('\x1');
+  for (int i = 0; i < depth - new_depth; i++) unput('\x2');
+  depth = new_depth;
+}
 
 

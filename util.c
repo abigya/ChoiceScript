@@ -1,6 +1,12 @@
+/** 
+*@file util.c 
+*@author Abigya Devkota and Dmitry Zinoviev
+*@date December 3, 2019
+*@brief C file with important functions 
+*/
+
 #include "csparser.h"
 #include "flex.h"
-
 /**
 *This function opens and reads a given text file after adding .txt to the parameter. 
 *It is used to read the list of scenes for a given story. 
@@ -39,21 +45,7 @@ int yyerror(void) {
   fprintf(stderr, "(infile):%d: syntax yyout\n", yylineno);
   exit(EXIT_FAILURE);      
 }
-/**
-*This function records the change in indentation in the ChoiceScript text files.
-*\x1 marks positive indentation.
-*\x2 marks negative indentation.
-*For the parser to fully read a file, positive indents must match negative indents. 
-*@param text A character pointer. 
-*@return No return value.
-*/
-void adjustIndent(char* text){
-  static int depth = 0;
-  int new_depth = strlen(text);
-  for (int i = 0; i < new_depth - depth; i++) unput('\x1');
-  for (int i = 0; i < depth - new_depth; i++) unput('\x2');
-  depth = new_depth;
-}
+
 /**
 *This is a safe function built on strdup. 
 *It prevents strdup from processing a null pointer. 

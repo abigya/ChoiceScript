@@ -23,8 +23,7 @@
 
 
 [i]What do [b]you[/b] prefer?[/i]
-*comment *goto_random_scene 
-*comment  narrative
+
 *choice
   #Leadership
    *set leadership +10
@@ -32,6 +31,9 @@
    *goto action
   #Strength
    *set strength +10
+   *goto_random_scene 
+      narrative
+      gosub
 
 
 *label action

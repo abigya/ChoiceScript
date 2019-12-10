@@ -160,23 +160,36 @@ story:
 scenelist:
   YY_SCENE_LIST blockofscenes {
     for (slist *start = $2; start; start = start->next){
-	/*check if file was imported*/      
-	if (strcmp(start->s, STARTUP_NAME)) {
+	/*check if file was imported*/	
+         int j;
+	 char *temp;
+		for (j=0;j<count;j++){
+			if (!strcmp(start->s,allscenes[j])){
+				temp = safe_malloc(sizeof(start->s));
+				temp = my_strdup(start->s);
+				
+			} 
+		}	
+		
+	if (strcmp(start->s, STARTUP_NAME) && strcmp(start->s,temp)) {
 	 
 	  if (count<MAX_SCENES){
 		allscenes[count++] = my_strdup(start->s);
 		imported_count++;
+                
 	  } 
-	 
-          fprintf(yyout,"%s was imported\n",start->s);
+         
 	  import(start->s);
+	  fprintf(stdout,"%s was imported by scenelist\n",start->s);
 	  for (int k=imported_count;k<count;k++){
+		fprintf(stdout,"%s was imported from import count\n",allscenes[k]);
 		import(allscenes[k]);
 		imported_count++;
 	  }
 	}
     }
     fprintf(OUTPUT,"\\chapter{Main Matter}\n");
+    
   };
 
 blockofscenes:
@@ -320,6 +333,8 @@ goto-random-scene:
 		if (level==0){ 
 			for (;imported_count<count;imported_count++){
 				import(allscenes[imported_count]);
+				
+				 
 	  		}		
 		}
 	};
