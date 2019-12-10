@@ -1,31 +1,34 @@
-All arithmetic expressions
-Conditionals
-Round
-input_text
-input_number
-rand
-stat_chart
+/required/
 bug
+achieve
+More games
+Share this game
+Show password
+restore password
+write documentation for the book in readme.txt using choicescript
+
+/optional/
 hide_reuse *partially done*
 disable_reuse *partially done*
 allow_reuse *partially done*
-Index
-Reference
-achieve
-achievement
-Check achievements
-More games
+
+/desirable/
+temp
+create
+set
 Delete
 Print
-gotoref
-setref
-temp
-Goto random scene (need a hidden scenelist that should not be mentioned in startup.txt)
-Script
+rand
+stat_chart
+input_text
+input_number
+Round
+All arithmetic expressions
+Conditionals
 Selectable if
-Share this game
-Show password
-Sound
+achievement
+Check achievements
+Script
 Capitalize, capitalize first string, quoted string
-write documentation - no $, _ ``'' are not supported
+- NO $, _ ``'' are not supported yet
 

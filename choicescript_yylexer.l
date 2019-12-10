@@ -185,7 +185,6 @@ CHAR    [^[:space:]\x1\x2[]
 
 %%
 
-
 /**
 *This function records the change in indentation in the ChoiceScript text files.
 *\x1 marks positive indentation.
@@ -201,5 +200,6 @@ void adjustIndent(char* text){
   for (int i = 0; i < depth - new_depth; i++) unput('\x2');
   depth = new_depth;
 }
+
 
 

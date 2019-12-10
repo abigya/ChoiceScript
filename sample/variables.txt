@@ -34,6 +34,7 @@
    *goto_random_scene 
       narrative
       gosub
+      death
 
 
 *label action

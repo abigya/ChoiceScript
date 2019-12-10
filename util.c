@@ -7,6 +7,7 @@
 
 #include "csparser.h"
 #include "flex.h"
+
 /**
 *This function opens and reads a given text file after adding .txt to the parameter. 
 *It is used to read the list of scenes for a given story. 
@@ -70,6 +71,8 @@ void *safe_malloc(size_t size){
     }
     return result;
 }
+
+
 /**
 *This is the main function of the parser. 
 *It allows the user to enter their own output filename. 

@@ -7,7 +7,7 @@ LEX = flex
 all: $(BIN)
 
 $(BIN): $(OBJS)
-	$(CC) $(OBJS) -o $(BIN)
+	$(CC) $(OBJS) -o $(BIN) -lfl
 	
 util.o: util.c flex.h
 

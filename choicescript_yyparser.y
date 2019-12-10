@@ -116,6 +116,7 @@ book: {
 	if (level==0){
    		fprintf(OUTPUT,"\\maketitle\n");
    		fprintf(OUTPUT,"\\label{__START__}");	
+		//check and import readme.txt"
 	}
  } story {
    if (level == 0) { /* Are we in startup.txt? */
@@ -162,16 +163,15 @@ scenelist:
     for (slist *start = $2; start; start = start->next){
 	/*check if file was imported*/	
          int j;
-	 char *temp;
+	 char *temp = NULL;
 		for (j=0;j<count;j++){
 			if (!strcmp(start->s,allscenes[j])){
-				temp = safe_malloc(sizeof(start->s));
-				temp = my_strdup(start->s);
-				
+				temp = start->s;
+				break;
 			} 
 		}	
-		
-	if (strcmp(start->s, STARTUP_NAME) && strcmp(start->s,temp)) {
+	
+	if (strcmp(start->s, STARTUP_NAME) && temp==NULL) {
 	 
 	  if (count<MAX_SCENES){
 		allscenes[count++] = my_strdup(start->s);
@@ -318,8 +318,9 @@ gosub-scene:
 
 goto-random-scene:
 	/*YY_GOTO_RANDOM_SCENE YY_VAR {fprintf(OUTPUT,"{$\\triangleleft$~{\\it Go to Chapter~\\uppercase{{\\bf %s}} on page~\\pageref{%s}.}~$\\triangleright$}\n\n", $2, $2);};*/
-        YY_GOTO_RANDOM_SCENE blockofscenes {
-	 for (slist *random = $2; random; random = random->next){
+        YY_GOTO_RANDOM_SCENE {fprintf(OUTPUT,"{$\\triangleleft$~{\\it Go to any of these chapters:\n");}
+         blockofscenes {
+	 for (slist *random = $3; random; random = random->next){
                 int j;
 		for (j=0;j<count;j++)
 			if (!strcmp(random->s,allscenes[j])) break;	
@@ -328,8 +329,10 @@ goto-random-scene:
 		 if (count<MAX_SCENES)allscenes[count++] = my_strdup(random->s);
 		    
                 }
-	    fprintf(OUTPUT,"{$\\triangleleft$~{\\it Go to Chapter~\\uppercase{{\\bf %s}} on page~\\pageref{%s}.}~$\\triangleright$}\n\n", random->s, random->s);
+	    
+	    fprintf(OUTPUT,"{\\uppercase{{\\bf %s}} on page~\\pageref{%s}%s\n}", random->s, random->s,random->next ? " or ":"");
 	 }
+		fprintf(OUTPUT,"}~$\\triangleright$}\n\n");
 		if (level==0){ 
 			for (;imported_count<count;imported_count++){
 				import(allscenes[imported_count]);
@@ -337,6 +340,7 @@ goto-random-scene:
 				 
 	  		}		
 		}
+		
 	};
 	 
 	
@@ -359,6 +363,8 @@ ending:
 	 fprintf(OUTPUT,"\\item[Play more games like this]\n\\url{https://www.choiceofgames.com/category/our-games/}\n");
 	 fprintf(OUTPUT,"\\item[Share this game with friends]\nPlease support our work by sharing this game with friends! The more people play, the more resources we'll have to work on the next game.\n");
          fprintf(OUTPUT,"\\end{description}");};
+more_games:
+	
 
 %%
 
