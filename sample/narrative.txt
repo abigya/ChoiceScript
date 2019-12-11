@@ -3,6 +3,7 @@
 *create tie 0
 *create side 0
 
+*achieve Adventurous
 Welcome to your very first ChoiceScript game!
 Using the innovative Choicescript computer language,this is also the first video game I ever made!
 .............................

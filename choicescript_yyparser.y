@@ -89,6 +89,11 @@
 %token YY_STAT_CHART
 %token YY_TITLE
 %token YY_URL
+%token YY_MORE_GAME
+%token YY_SHARE_GAME
+%token YY_ACHIEVE
+%token YY_SHOW_PASSWORD
+%token YY_RESTORE_GAME
 %token<d> YY_FLOAT
 %token<i> YY_INT
 %token<s> YY_CASE
@@ -156,6 +161,12 @@ story:
         | ending {fprintf(yyout, "Ending found\n");} story
 	| YY_HIDE_REUSE {fprintf(yyout,"Hide Reuse found\n");} story
 	| YY_DISABLE_REUSE {fprintf(yyout,"Hide Disable found\n");} story
+	| bug story
+	| more_game story
+	| share_game story
+	| achieve story
+	| show_password story
+	| restore_game story
 	| %empty;
 
 scenelist:
@@ -180,9 +191,9 @@ scenelist:
 	  } 
          
 	  import(start->s);
-	  fprintf(stdout,"%s was imported by scenelist\n",start->s);
+	  fprintf(yyout,"%s was imported by scenelist\n",start->s);
 	  for (int k=imported_count;k<count;k++){
-		fprintf(stdout,"%s was imported from import count\n",allscenes[k]);
+		fprintf(yyout,"%s was imported from import count\n",allscenes[k]);
 		import(allscenes[k]);
 		imported_count++;
 	  }
@@ -299,7 +310,7 @@ cases:
 	| case;
 
 case:
-        YY_CASE {fprintf(OUTPUT,"\\item[%s]\n", $1);} block
+        YY_CASE {fprintf(OUTPUT,"\\item[%s]\n\n", $1);} block
 	|YY_HIDE_REUSE  YY_CASE {fprintf(OUTPUT,"\\item[%s~\\Ovalbox{(~~)}]\n", $2);} block
 	|YY_DISABLE_REUSE  YY_CASE {fprintf(OUTPUT,"\\item[%s~\\Ovalbox{(~~)}]\n", $2);/*needs improvement*/} block
 	|YY_ALLOW_REUSE  YY_CASE {fprintf(OUTPUT,"\\item[%s]\n", $2);/*This needs work*/} block;
@@ -363,9 +374,21 @@ ending:
 	 fprintf(OUTPUT,"\\item[Play more games like this]\n\\url{https://www.choiceofgames.com/category/our-games/}\n");
 	 fprintf(OUTPUT,"\\item[Share this game with friends]\nPlease support our work by sharing this game with friends! The more people play, the more resources we'll have to work on the next game.\n");
          fprintf(OUTPUT,"\\end{description}");};
-more_games:
-	
 
+bug: 
+      YY_BUG YY_STRING {fprintf(OUTPUT,"%s\n",$2);};
+
+more_game: 
+	YY_MORE_GAME {fprintf(OUTPUT,"\nPlay more games like this!\n\\url{https://www.choiceofgames.com/category/our-games/}\n\n");};
+share_game:
+	YY_SHARE_GAME {fprintf(OUTPUT,"\nShare this game with friends!\nPlease support our work by sharing this game with friends! The more people play, the more resources we'll have to work on the next game.\n\n");};
+
+achieve:
+	YY_ACHIEVE YY_VAR {fprintf(OUTPUT,"Congratulations! You have unlocked {\\bf %s} Go to page~\\pageref{%s} to claim it.\n\n",$2,$2);};
+show_password:
+	YY_SHOW_PASSWORD {fprintf(OUTPUT,"Did you leave a bookmark here ? (Yes) or (No)\n\n");};
+restore_game:	
+	YY_RESTORE_GAME {fprintf(OUTPUT,"Do you want to continue from here ? (Yes) or (No) \n\n");};
 %%
 
 

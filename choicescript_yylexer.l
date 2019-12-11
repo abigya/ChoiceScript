@@ -148,6 +148,16 @@ CHAR    [^[:space:]\x1\x2[]
 						return YY_TITLE;}/**< @return Token to parser when title is found*/
 "*author"	{fprintf(yyout,"author command");BEGIN(EXPR); 
 						return YY_AUTHOR;}/**< @return Token to parser when author is found*/
+"*more_games"	{fprintf(yyout,"more_games command"); 
+						return YY_MORE_GAME;}/**< @return Token to parser when more_games is found*/
+"*share_this_game"	{fprintf(yyout,"share_this_game command"); 
+						return YY_SHARE_GAME;}/**< @return Token to parser when share_this_game is found*/
+"*achieve"	{fprintf(yyout,"achieve command");BEGIN(EXPR); 
+						return YY_ACHIEVE;}/**< @return Token to parser when achieve is found*/	
+"*show_password" {fprintf(yyout,"show_password command"); 
+						return YY_SHOW_PASSWORD;}/**< @return Token to parser when show_password is found*/
+"*restore_game"	{fprintf(yyout,"restore_game command"); 
+						return YY_RESTORE_GAME;}/**< @return Token to parser when restore_game is found*/
 [[:blank:]]+"-"[[:blank:]]+	{yylval.s = "---"; 
 						return YY_STRING; } /**< @return Token to parser when an empty string is found*/
 
