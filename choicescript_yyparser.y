@@ -120,8 +120,14 @@ book: {
  } preamble {
 	if (level==0){
    		fprintf(OUTPUT,"\\maketitle\n");
-   		fprintf(OUTPUT,"\\label{__START__}");	
-		//check and import readme.txt"
+   		fprintf(OUTPUT,"\\label{__START__}");
+		FILE *context = fopen("readme.txt","r");
+		if (!context) {
+   			perror("readme.txt");
+ 		}//else{
+			//import("readme");
+		//}
+			
 	}
  } story {
    if (level == 0) { /* Are we in startup.txt? */
