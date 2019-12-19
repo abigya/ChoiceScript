@@ -121,12 +121,6 @@ book: {
 	if (level==0){
    		fprintf(OUTPUT,"\\maketitle\n");
    		fprintf(OUTPUT,"\\label{__START__}");
-		FILE *context = fopen("readme.txt","r");
-		if (!context) {
-   			perror("readme.txt");
- 		}//else{
-			//import("readme");
-		//}
 			
 	}
  } story {
@@ -136,7 +130,7 @@ book: {
  };
 
 preamble:
-	title author 
+	title author
 	|author title
 	|title
 	|author

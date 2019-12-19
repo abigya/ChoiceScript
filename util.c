@@ -31,10 +31,16 @@ void import(char* file) {
  */
  yypush_buffer_state(yy_create_buffer(f, YY_BUF_SIZE));
  free(fullfile);
- fprintf(OUTPUT,"\\uppercase{\\chapter{%s}}\\label{%s}\n", file, file);
+ if (!strcmp(file,"readme")){
+    fprintf(OUTPUT,"\\chapter{How To Read This Book}\n");
+	
+ }else{
+ 	fprintf(OUTPUT,"\\uppercase{\\chapter{%s}}\\label{%s}\n", file, file);
+ }
  level = 1;
  yyparse(); /**< Parse the includes recursively */
  level = 0;
+ 
 }
 
 /**
