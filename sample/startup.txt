@@ -17,6 +17,7 @@
 
 *title My First: ChoiceScript Game
 *author Anonymous
+
 *scene_list
   readme
   startup
