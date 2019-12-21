@@ -1,6 +1,8 @@
 <h1>ChoiceScript</h1>
 <p>A C-based parser for ChoiceScript coded with Flex, Bison and LaTeX.<p>
    <p>It supports most ChoiceScript commands except mathematical operations, conditionals and variable assignments.</p>
+   <p>The sample folder consists of .txt files that have been parsed successfully by this parser.</p>
+   <p>Simple LaTeX commands have been used to generate the .pdf file once parsing is finished.</p>
    <p>Please refer to the TODO in this repository for features that could be added in the future.</p>
 <h2>Installation</h2>
 <p>This project works perfectly on Linux, adjustments for Windows and Mac will be made in the future.</p> 
