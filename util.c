@@ -32,7 +32,7 @@ void import(char* file) {
  yypush_buffer_state(yy_create_buffer(f, YY_BUF_SIZE));
  free(fullfile);
  if (!strcmp(file,"readme")){
-    fprintf(OUTPUT,"\\chapter{How To Read This Book}\n");
+    fprintf(OUTPUT,"\\chapter*{How To Read This Book}\n");
 	
  }else{
  	fprintf(OUTPUT,"\\uppercase{\\chapter{%s}}\\label{%s}\n", file, file);

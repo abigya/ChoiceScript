@@ -28,7 +28,7 @@ What kind of animal will you be?
   #Elephant
     Well, elephants are interesting animals, too.
     *finish
-*bug All animals are equally powerful anyway!
+*bug If you are reading this, go back and start over. You did not select an animal so all animals are equally powerful!
 *more_games
 *share_this_game
 *show_password

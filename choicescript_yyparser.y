@@ -121,6 +121,7 @@ book: {
 	if (level==0){
    		fprintf(OUTPUT,"\\maketitle\n");
    		fprintf(OUTPUT,"\\label{__START__}");
+		
 			
 	}
  } story {
@@ -171,6 +172,7 @@ story:
 
 scenelist:
   YY_SCENE_LIST blockofscenes {
+    import("readme");
     for (slist *start = $2; start; start = start->next){
 	/*check if file was imported*/	
          int j;
@@ -357,7 +359,7 @@ goto-random-scene:
 	
 
 label: 
-        YY_LABEL YY_VAR {fprintf(OUTPUT,"\\Ovalbox{$\\surd$~%s\\label{%s}}\n",$2,$2);};
+        YY_LABEL YY_VAR {fprintf(OUTPUT,"\\Ovalbox{$\\surd$~%s\\label{%s}}\n\n",$2,$2);};
 
 page_break:
 	YY_PAGE_BREAK {fprintf(OUTPUT,"\\cleardoublepage\n");};
@@ -386,9 +388,9 @@ share_game:
 achieve:
 	YY_ACHIEVE YY_VAR {fprintf(OUTPUT,"Congratulations! You have unlocked {\\bf %s} Go to page~\\pageref{%s} to claim it.\n\n",$2,$2);};
 show_password:
-	YY_SHOW_PASSWORD {fprintf(OUTPUT,"Did you leave a bookmark here ? (Yes) or (No)\n\n");};
+	YY_SHOW_PASSWORD {fprintf(OUTPUT,"You can leave a bookmark here.");};
 restore_game:	
-	YY_RESTORE_GAME {fprintf(OUTPUT,"Do you want to continue from here ? (Yes) or (No) \n\n");};
+	YY_RESTORE_GAME {fprintf(OUTPUT,"If you have left a bookmark, you can continue from here.\n\n");};
 %%
 
 

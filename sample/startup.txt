@@ -19,7 +19,6 @@
 *author Anonymous
 
 *scene_list
-  readme
   startup
   animal
   variables
